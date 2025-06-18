@@ -1,0 +1,36 @@
+<suki:SukiWindow xmlns="https://github.com/avaloniaui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:vm="using:Desktop.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                 x:Class="Desktop.Views.MainWindow"
+                 x:DataType="vm:MainWindowViewModel"
+                 Icon="/Assets/avalonia-logo.ico"
+                 Title="Desktop">
+
+    <suki:SukiWindow.Hosts>
+        <suki:SukiToastHost Manager="{Binding ToastManager}" />
+    </suki:SukiWindow.Hosts>
+
+    <StackPanel Width="250"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+
+        <Label>Email</Label>
+        <TextBox Text="{Binding Email}" />
+
+        <Label>Name</Label>
+        <TextBox Text="{Binding Name}" />
+
+        <Label>Age</Label>
+        <NumericUpDown Value="{Binding Age}" />
+
+        <Button Margin="0 10"
+                HorizontalAlignment="Right"
+                Classes="Success"
+                Command="{Binding AddUserCommand}"
+                Content="Add User" />
+    </StackPanel>
+</suki:SukiWindow>
