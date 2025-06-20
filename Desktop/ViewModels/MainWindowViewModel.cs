@@ -1,76 +1,128 @@
 ﻿using Avalonia.Controls.Notifications;
-using CommunityToolkit.Mvvm.Input;
-using Domain.Users;
-using SukiUI.Toasts;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
-using System.IO;
-using System.Threading;
 using Common;
-using Domain.Operations;
-using ROP;
-using UseCases.Operations;
+using CommunityToolkit.Mvvm.Input;
+using Domain.Core.Errors;
+using Domain.Core.Types;
+using Domain.Logfiles;
+using Domain.Machines;
+using Domain.Users;
+using OneOf;
+using R3;
+using SukiUI.Toasts;
+using System.IO;
+using System.Threading.Tasks;
+using System.Threading;
+using System;
+using UseCases.Logfiles;
 using UseCases.Users;
 
 namespace Desktop.ViewModels;
 
-public partial class MainWindowViewModel(
-    UserUseCases userUseCases,
-    OperationsUseCases operationsUseCases,
-    IResilientFileSystem resilientFileSystem // TODO: Remove this dependency if not needed
-) : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase
 {
     public ISukiToastManager ToastManager { get; } = new SukiToastManager();
     public string Email { get; set; } = "";
     public string Name { get; set; } = "";
     public int Age { get; set; }
+    public BindableReactiveProperty<StateType> MachineState { get; } = new(StateType.Stopped);
+    public BindableReactiveProperty<bool> IsConnected { get; } = new(false);
 
-    [RelayCommand]
-    private async Task SendOperationAsync(CancellationToken ct = default)
+    private readonly UserUseCases _userUseCases;
+    private readonly LogfilesUseCases _logfilesUseCases;
+    private readonly IResilientFileSystem _resilientFileSystem;
+    private readonly IMachine _machine;
+
+    public MainWindowViewModel(
+        UserUseCases userUseCases,
+        LogfilesUseCases logfilesUseCases,
+        IResilientFileSystem resilientFileSystem, // TODO: Remove this dependency if not needed,
+        IMachine machine)
+    {
+        this._userUseCases = userUseCases;
+        this._logfilesUseCases = logfilesUseCases;
+        this._resilientFileSystem = resilientFileSystem;
+        this._machine = machine;
+        this.SetupRx();
+    }
+
+    private void SetupRx()
+    {
+        this._machine.LogfileCreated
+            .SubscribeAwait(async (result, ct) =>
+            {
+                await result.Match<Task>(
+                    logfile => this.ProcessLogfile(logfile, ct),
+                    this.ProcessError);
+            })
+            .AddTo(ref Disposables);
+
+        this._machine.State
+            .Do(x => this.MachineState.Value = x)
+            .Subscribe(x => this.IsConnected.Value = x != StateType.Stopped)
+            .AddTo(ref Disposables);
+    }
+
+    private async Task ProcessLogfile(Logfile logfile, CancellationToken ct)
+    {
+        await this.AddLogfileToSfc(logfile, ct);
+    }
+
+    private async Task<OneOf<Logfile, Error>> AddLogfileToSfc(Logfile logfile, CancellationToken ct)
     {
         Console.WriteLine($@"Start: {DateTime.Now:HH:mm:ss.fff}");
-        var newFile = await resilientFileSystem.CopyFileAsync(
-            @"C:\Users\david_ascencio\Documents\dev\Hermes\Input\PASS_4EA36.3dx",
-            $@"C:\Users\david_ascencio\Documents\dev\Hermes\Input\PASS_4EA36_{Guid.NewGuid()}.3dx",
-            ct
-        );
-        var a = await operationsUseCases.AddOperationToSfc.ExecuteAsync(
-            new AddOperationToSfcRequest(
-                FileToUpload: new FileInfo(newFile),
+        var response = await _logfilesUseCases.AddLogfileToSfc.ExecuteAsync(
+            new AddLogfileToSfcCommand(
+                LogfileToUpload: logfile,
                 OkResponses: "OK",
                 Timeout: TimeSpan.FromSeconds(5),
+                BackupDirectory: new DirectoryInfo(@"C:\Users\david_ascencio\Documents\dev\Hermes\Backup\"),
                 MaxRetries: 0),
             ct);
-        await resilientFileSystem.DeleteFileIfExistsAsync(newFile, ct);
-        await resilientFileSystem.DeleteFileIfExistsAsync(newFile.Replace(".3dx", ".log"), ct);
-        a.Map(x =>
-        {
-            Console.WriteLine($"File: {x.UploadResponse} Result: {x.UploadResult}");
-            return x;
-        });
+
+        response.Switch(
+            success =>
+            {
+                this.ShowToast($"File: {logfile.FileInfo.Name} Result: {success}",
+                    NotificationType.Success);
+            },
+            error => { this.ShowToast($"Error: {error.Message}", NotificationType.Error); });
         Console.WriteLine($@"End: {DateTime.Now:HH:mm:ss.fff}");
-        this.ShowToast("Operation sent successfully.", NotificationType.Success);
+        return response;
+    }
+
+    private Task ProcessError(Error error)
+    {
+        this.ShowToast($"Error : {error.Message}", NotificationType.Error);
+        return Task.FromResult<OneOf<Logfile, Error>>(error);
+    }
+
+    [RelayCommand]
+    private void Start()
+    {
+        _machine.Start();
+        this.ShowToast("Started successfully.", NotificationType.Information);
+    }
+
+    [RelayCommand]
+    private void Stop()
+    {
+        _machine.Stop();
+        this.ShowToast("Stopped successfully.", NotificationType.Information);
     }
 
     [RelayCommand]
     private async Task AddUserAsync()
     {
-        var result = await userUseCases.AddUser.ExecuteAsync(new AddUserRequest(
+        var result = await _userUseCases.AddUser.ExecuteAsync(new AddUserRequest(
             Email,
             Name,
             Age
         ));
 
-        if (result.Success)
-        {
-            this.ShowToast("User added successfully.", NotificationType.Success);
-        }
-        else
-        {
-            var errorMessage = string.Join("\n", result.Errors.Select(e => e.Message));
-            this.ShowToast(errorMessage, NotificationType.Error);
-        }
+        result.Switch(
+            userDto => this.ShowToast($"User {userDto.Name} added successfully.", NotificationType.Success),
+            error => this.ShowToast(error.Message, NotificationType.Error)
+        );
     }
 
     private void ShowToast(

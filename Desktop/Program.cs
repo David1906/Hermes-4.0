@@ -2,10 +2,14 @@
 using System;
 using System.IO;
 using Common;
+using Common.Serial;
 using Data;
-using Data.Sfc;
+using Data.Machines;
+using Data.Scanners;
 using Desktop.ViewModels;
 using Domain.Core.Types;
+using Domain.Logfiles;
+using Domain.Machines;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UseCases;
@@ -25,15 +29,20 @@ sealed class Program
         var applicationBuilder = Host.CreateApplicationBuilder(args);
         applicationBuilder.Services
             .AddViewModels()
-            .AddData()
+            .AddInfrastructure()
             .AddUseCases();
 
         // TODO
+        applicationBuilder.Services.AddTransient<MachineOptions>();
+        applicationBuilder.Services.AddTransient<GkgMachineOptions>();
+        applicationBuilder.Services.AddTransient<SerialPortAsync>();
+        applicationBuilder.Services.AddTransient<SerialPortRx>();
+        applicationBuilder.Services.AddTransient<SerialScannerRx>();
         applicationBuilder.Services.AddSingleton<IResilientFileSystem, ResilientFileSystem>();
         applicationBuilder.Services.AddTransient<IFileSystemWatcherRx, FileSystemWatcherRx>();
-        applicationBuilder.Services.AddSingleton<SfcApiOptions>(_ =>
+        applicationBuilder.Services.AddSingleton<LogfileGatewayOptions>(_ =>
         {
-            return new SfcApiOptions
+            return new LogfileGatewayOptions
             {
                 BaseDirectory = new DirectoryInfo(@"C:\Users\david_ascencio\Documents\dev\Hermes\Sfc"),
                 ResponseExtensionType = FileExtensionType.Log

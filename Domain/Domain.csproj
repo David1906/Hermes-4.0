@@ -7,11 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Netmentor.ROP" Version="1.9.0" />
+      <PackageReference Include="OneOf" Version="3.0.271" />
+      <PackageReference Include="R3" Version="1.3.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Core\" />
+      <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
 
 </Project>

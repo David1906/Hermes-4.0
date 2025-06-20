@@ -6,7 +6,7 @@ public class FileSystemWatcherRx : IDisposable, IFileSystemWatcherRx
 {
     private readonly FileSystemWatcher _watcher = new();
 
-    public ReactiveProperty<string> LastFileCreated { get; } = new("");
+    public Subject<string> FileCreated { get; } = new();
 
     private DisposableBag _disposableBag;
 
@@ -17,13 +17,12 @@ public class FileSystemWatcherRx : IDisposable, IFileSystemWatcherRx
                 h => (_, e) => h(e),
                 h => this._watcher.Created += h,
                 h => this._watcher.Created -= h)
-            .Subscribe(x => this.LastFileCreated.Value = x.FullPath)
+            .Subscribe(x => this.FileCreated.OnNext(x.FullPath))
             .AddTo(ref _disposableBag);
     }
 
     public void Start(DirectoryInfo directory, string filter = "*.*")
     {
-        this.LastFileCreated.Value = null;
         this._watcher.Path = directory.FullName;
         this._watcher.Filter = filter;
         this._watcher.EnableRaisingEvents = true;

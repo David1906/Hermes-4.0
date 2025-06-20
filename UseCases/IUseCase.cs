@@ -1,8 +1,10 @@
-using ROP;
+using Domain;
+using Domain.Core.Errors;
+using OneOf;
 
 namespace UseCases;
 
 public interface IUseCase<in T, T1>
 {
-    public Task<Result<T1>> ExecuteAsync(T request, CancellationToken ct = default);
+    public Task<OneOf<T1, Error>> ExecuteAsync(T command, CancellationToken ct = default);
 }

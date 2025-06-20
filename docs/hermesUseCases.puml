@@ -1,30 +1,30 @@
 @startuml Use cases
 left to right direction
 
-usecase (ProcessOperation)
-usecase (UploadOperationToSfc)
+usecase (ProcessLogfile)
+usecase (UploadLogfileToSfc)
 usecase (SendUutInConveyor)
-usecase (MoveFilesToBackup)
-usecase (AddOperation)
+usecase (MoveLogfileToBackup)
 usecase (AddUutSerialNumbers)
 usecase (LockMachine)
 usecase (UnlockMachine)
 usecase (ShowOperationResult)
+usecase (AddOperation)
 
-:User: --> (ProcessOperation)
+:User: --> (ProcessLogfile)
 :User: --> (UnlockMachine)
 :User: --> (ConfigureSettings)
 :User: --> (AddUser)
 :User: --> (EditUser)
 :User: --> (DeleteUser)
 
-:Machine: --> (ProcessOperation)
-(ProcessOperation) ..> (UploadOperationToSfc) : "include"
-(ProcessOperation) ..> (SendUutInConveyor) : "include"
-(ProcessOperation) ..> (MoveFilesToBackup) : "include"
-(ProcessOperation) ..> (AddOperation) : "include"
-(ProcessOperation) ..> (AddUutSerialNumbers) : "include"
-(ProcessOperation) ..> (LockMachine) : "include"
-(ProcessOperation) ..> (ShowOperationResult) : "include"
+:Machine: --> (ProcessLogfile)
+(ProcessLogfile) ..> (UploadLogfileToSfc) : "include"
+(ProcessLogfile) ..> (SendUutInConveyor) : "include"
+(ProcessLogfile) ..> (MoveLogfileToBackup) : "include"
+(ProcessLogfile) ..> (AddUutSerialNumbers) : "include"
+(ProcessLogfile) ..> (LockMachine) : "include"
+(ProcessLogfile) ..> (ShowOperationResult) : "include"
+(ProcessLogfile) ..> (AddOperation) : "include"
 
 @enduml

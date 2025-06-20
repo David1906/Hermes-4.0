@@ -1,5 +1,3 @@
-using Api.Contracts;
-using Api.Extensions;
 using Data;
 using Domain.Users;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddOpenApiDocument()
     .AddOpenApi()
-    .AddData()
+    .AddInfrastructure()
     .AddUseCases();
 
 var app = builder.Build();
@@ -28,8 +26,7 @@ app.UseHttpsRedirection();
 
 app.MapPost("/users", async ([FromBody] AddUserRequest request, UserUseCases useCases) =>
     await useCases.AddUser
-        .ExecuteAsync(request)
-        .ToHttpResult())
+        .ExecuteAsync(request))
     .WithName("AddUser");
 
 app.Run();

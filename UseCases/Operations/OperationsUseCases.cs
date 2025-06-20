@@ -1,4 +1,5 @@
+using UseCases.Logfiles;
+
 namespace UseCases.Operations;
 
-public record OperationsUseCases(
-    AddOperationToSfc AddOperationToSfc);
+public record OperationsUseCases();

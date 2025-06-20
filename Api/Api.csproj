@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
-        <PackageReference Include="Netmentor.ROP" Version="1.9.0" />
         <PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
     </ItemGroup>
 

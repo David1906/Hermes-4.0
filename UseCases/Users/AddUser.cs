@@ -1,22 +1,22 @@
 using Data.Data.Users;
+using Domain.Core.Errors;
 using Domain.Users;
-using ROP;
+using OneOf;
 
 namespace UseCases.Users;
 
 public class AddUser(IUsersRepository usersRepository)
 {
-    public async Task<Result<UserDto>> ExecuteAsync(AddUserRequest request, CancellationToken ct = default)
+    public async Task<OneOf<UserDto, Error>> ExecuteAsync(AddUserRequest request, CancellationToken ct = default)
     {
         var isValid = Common.Validator.TryValidate(request.ToDto(), out var validationResults);
         if (!isValid)
         {
-            var errors = validationResults.Select(r => Error.Create(r.ErrorMessage, Guid.NewGuid()));
-            return Result.BadRequest<UserDto>([..errors]);
+            var errors = validationResults.Select(r => new Error(r.ErrorMessage));
+            return new BadRequestError([..errors]);
         }
 
-        return await usersRepository
-            .AddAsync(request, ct)
-            .Map(x => x.ToDto());
+        var result = await usersRepository.AddAsync(request, ct);
+        return result.MapT0(x => x.ToDto());
     }
 }

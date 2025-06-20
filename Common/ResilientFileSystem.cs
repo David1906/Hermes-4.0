@@ -55,6 +55,20 @@ public class ResilientFileSystem : IResilientFileSystem
         }, ct);
     }
 
+    public async Task<string> MoveFileAsync(string originFullPath, string destinationFullPath,
+        CancellationToken ct = default)
+    {
+        return await _retryPipeline.ExecuteAsync(async ct1 =>
+        {
+            return await Task.Run(() =>
+            {
+                CreateDirectoryIfNotExists(destinationFullPath);
+                File.Move(originFullPath, destinationFullPath);
+                return destinationFullPath;
+            }, ct1);
+        }, ct);
+    }
+
     private void CreateDirectoryIfNotExists(string fullPath)
     {
         var path = Path.GetDirectoryName(fullPath);
@@ -78,5 +92,11 @@ public class ResilientFileSystem : IResilientFileSystem
                 return fullPath;
             }, ct1);
         }, ct);
+    }
+
+    public async Task WriteAllTextAsync(string destinationFullPath, string content, CancellationToken ct)
+    {
+        CreateDirectoryIfNotExists(destinationFullPath);
+        await File.WriteAllTextAsync(destinationFullPath, content, ct);
     }
 }

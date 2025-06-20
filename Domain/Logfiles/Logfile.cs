@@ -1,6 +1,6 @@
-namespace Common;
+namespace Domain.Logfiles;
 
-public class TextDocument
+public class Logfile
 {
     public int Id { get; init; }
     public required string Content { get; set; }
@@ -8,4 +8,7 @@ public class TextDocument
 
     public string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(this.FileInfo.FullName);
     public bool IsEmpty => string.IsNullOrEmpty(this.Content);
+    public string FullName => this.FileInfo.FullName;
+    public string Name => this.FileInfo.Name;
+    public bool Exists => this.FileInfo.Exists;
 }

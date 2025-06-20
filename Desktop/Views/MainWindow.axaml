@@ -33,10 +33,20 @@
                 Command="{Binding AddUserCommand}"
                 Content="Add User" />
 
-        <Button Margin="0 10"
-                HorizontalAlignment="Left"
-                Classes="Success"
-                Command="{Binding SendOperationCommand}"
-                Content="Send Operation" />
+        <TextBlock Text="{Binding MachineState.Value, StringFormat=State: {0} }" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Margin=" 10"
+                    Classes="Success"
+                    Command="{Binding StartCommand}"
+                    Content="Start"
+                    IsVisible="{Binding !IsConnected.Value}" />
+
+            <Button Margin=" 10"
+                    Classes="Danger"
+                    Command="{Binding StopCommand}"
+                    Content="Stop"
+                    IsVisible="{Binding IsConnected.Value}" />
+        </StackPanel>
     </StackPanel>
 </suki:SukiWindow>

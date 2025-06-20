@@ -4,7 +4,7 @@ namespace Common;
 
 public interface IFileSystemWatcherRx
 {
-    ReactiveProperty<string> LastFileCreated { get; }
+    Subject<string> FileCreated { get; }
     void Start(DirectoryInfo directory, string filter = "*.*");
     void Stop();
     void Dispose();

@@ -1,5 +1,6 @@
 using Domain.Boards;
 using Domain.Core.Types;
+using Domain.Logfiles;
 
 namespace Domain.Operations;
 
@@ -8,9 +9,9 @@ public class Operation
     public int Id { get; set; }
     public List<Board> Boards { get; set; } = [];
     public OperationResultType Result { get; set; } = OperationResultType.Unknown;
-    public FileInfo? Logfile { get; set; }
+    public Logfile? Logfile { get; set; }
     public UploadResultType UploadResult { get; set; } = UploadResultType.Unknown;
-    public FileInfo? UploadResponse { get; set; }
+    public Logfile? UploadResponse { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool SkipForSampling { get; set; }
     public bool IsAutoSend { get; set; }
