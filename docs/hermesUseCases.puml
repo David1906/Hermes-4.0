@@ -1,0 +1,30 @@
+@startuml Use cases
+left to right direction
+
+usecase (ProcessOperation)
+usecase (UploadOperationToSfc)
+usecase (SendUutInConveyor)
+usecase (MoveFilesToBackup)
+usecase (AddOperation)
+usecase (AddUutSerialNumbers)
+usecase (LockMachine)
+usecase (UnlockMachine)
+usecase (ShowOperationResult)
+
+:User: --> (ProcessOperation)
+:User: --> (UnlockMachine)
+:User: --> (ConfigureSettings)
+:User: --> (AddUser)
+:User: --> (EditUser)
+:User: --> (DeleteUser)
+
+:Machine: --> (ProcessOperation)
+(ProcessOperation) ..> (UploadOperationToSfc) : "include"
+(ProcessOperation) ..> (SendUutInConveyor) : "include"
+(ProcessOperation) ..> (MoveFilesToBackup) : "include"
+(ProcessOperation) ..> (AddOperation) : "include"
+(ProcessOperation) ..> (AddUutSerialNumbers) : "include"
+(ProcessOperation) ..> (LockMachine) : "include"
+(ProcessOperation) ..> (ShowOperationResult) : "include"
+
+@enduml

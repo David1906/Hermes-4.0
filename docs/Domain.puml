@@ -1,0 +1,13 @@
+@startuml
+
+class Operation
+Operation *-down-> "+" Task
+
+class Task
+Task *-down-> Uut
+
+class Uut
+Uut *-down-> "+" Board
+
+class Board
+@enduml

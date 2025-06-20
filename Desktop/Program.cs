@@ -1,7 +1,12 @@
 ﻿using Avalonia;
 using System;
+using System.IO;
+using Common;
 using Data;
+using Data.Sfc;
 using Desktop.ViewModels;
+using Domain.Core.Types;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UseCases;
 
@@ -17,13 +22,26 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var appHostBuilder = Host.CreateApplicationBuilder(args);
-        appHostBuilder.Services
+        var applicationBuilder = Host.CreateApplicationBuilder(args);
+        applicationBuilder.Services
             .AddViewModels()
             .AddData()
             .AddUseCases();
 
-        AppHost = appHostBuilder.Build();
+        // TODO
+        applicationBuilder.Services.AddSingleton<IResilientFileSystem, ResilientFileSystem>();
+        applicationBuilder.Services.AddTransient<IFileSystemWatcherRx, FileSystemWatcherRx>();
+        applicationBuilder.Services.AddSingleton<SfcApiOptions>(_ =>
+        {
+            return new SfcApiOptions
+            {
+                BaseDirectory = new DirectoryInfo(@"C:\Users\david_ascencio\Documents\dev\Hermes\Sfc"),
+                ResponseExtensionType = FileExtensionType.Log
+            };
+        });
+        applicationBuilder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
+
+        AppHost = applicationBuilder.Build();
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

@@ -32,5 +32,11 @@
                 Classes="Success"
                 Command="{Binding AddUserCommand}"
                 Content="Add User" />
+
+        <Button Margin="0 10"
+                HorizontalAlignment="Left"
+                Classes="Success"
+                Command="{Binding SendOperationCommand}"
+                Content="Send Operation" />
     </StackPanel>
 </suki:SukiWindow>

@@ -1,7 +1,7 @@
 using Domain.Users;
 using ROP;
 
-namespace Data.Repositories;
+namespace Data.Data.Users;
 
 public interface IUsersRepository
 {

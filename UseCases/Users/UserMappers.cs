@@ -2,7 +2,7 @@ using Domain.Users;
 
 namespace UseCases.Users;
 
-public static class UserMapper
+public static class UserMappers
 {
     public static UserDto ToDto(this AddUserRequest request)
     {

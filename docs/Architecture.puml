@@ -1,0 +1,77 @@
+@startuml
+
+'---- Domain Layer ----
+package Domain {
+    package Users {
+    
+        class AddUserRequest {
+            + string Name
+            + int Age
+        }
+            
+        class User {
+            + string Name
+            + int Age
+        }
+    }
+}
+
+'---- Notificator Layer ----
+package Notificator {
+    package Users {
+        interface IEventNotificator {
+            + Task Notify<T>(T message)
+        }
+    }
+}
+
+'---- Data Layer ----
+package Data {
+    package Users {
+    
+        interface IUsersRepository {
+            + Task<User> AddUser(AddUserRequest request)
+        }        
+        IUsersRepository .down.> Domain.Users.AddUserRequest
+        IUsersRepository .down.> Domain.Users.User
+    }
+}
+
+'---- UseCases Layer ----
+package UseCases {
+    package Users {      
+            
+        class AddUserHandler {
+            + Task Execute(AddUserRequest request)
+        }
+        AddUserHandler .down.> AddUserRequest
+        AddUserHandler .down.> Domain.Users.User
+        AddUserHandler *-down-> Data.Users.IUsersRepository
+        AddUserHandler *-down-> Notificator.Users.IEventNotificator
+        
+        class UsersUseCases {
+            + AddUser
+        }
+        UsersUseCases .down.> UseCases.Users.AddUserHandler
+    }
+}
+
+'---- API Layer ----
+package API{
+    package Controllers {
+        class UsersController {
+            + Task<IActionResult> Post(AddUserRequest request)
+        }
+        UsersController *-down-> UseCases.Users.UsersUseCases
+        UsersController .down.> Domain.Users.AddUserRequest
+    }
+}
+
+'---- Desktop Layer ----
+package Desktop {
+    package Users {
+        class UsersViewModel {}
+        UsersViewModel *-down-> UseCases.Users.UsersUseCases
+    }
+}
+@enduml
