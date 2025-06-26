@@ -1,10 +1,8 @@
-using Domain;
-using Domain.Core.Errors;
-using OneOf;
+using Common.ResultOf;
 
 namespace UseCases;
 
 public interface IUseCase<in T, T1>
 {
-    public Task<OneOf<T1, Error>> ExecuteAsync(T command, CancellationToken ct = default);
+    public Task<ResultOf<T1>> ExecuteAsync(T command, CancellationToken ct = default);
 }

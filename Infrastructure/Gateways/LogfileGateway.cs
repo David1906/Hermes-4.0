@@ -1,9 +1,8 @@
-using Common;
 using Common.Extensions;
+using Common.ResultOf;
+using Common;
 using Domain.Logfiles;
-using OneOf;
 using R3;
-using Error = Domain.Core.Errors.Error;
 
 namespace Infrastructure.Gateways;
 
@@ -13,19 +12,19 @@ public class LogfileGateway(
     IFileSystemWatcherRx fileSystemWatcherRx,
     IResilientFileSystem resilientFileSystem) : ILogfileGateway
 {
-    public async Task<OneOf<Logfile, Error>> UploadOperationAsync(
+    public async Task<ResultOf<Logfile>> UploadOperationAsync(
         Logfile logfileToUpload,
         int maxRetries,
         TimeSpan timeout,
         CancellationToken ct = default)
     {
         var retries = 0;
-        OneOf<Logfile, Error> result;
+        ResultOf<Logfile> result;
         do
         {
             if (ct.IsCancellationRequested)
             {
-                return Error.OperationCancelled;
+                return ResultOf<Logfile>.Failure(Error.OperationCancelled);
             }
 
             if (retries > 0)
@@ -37,13 +36,13 @@ public class LogfileGateway(
             retries++;
         } while (
             !ct.IsCancellationRequested &&
-            result.IsT1 &&
+            !result.IsSuccess &&
             retries <= maxRetries);
 
         return result;
     }
 
-    private async Task<OneOf<Logfile, Error>> UploadImplementationAsync(
+    private async Task<ResultOf<Logfile>> UploadImplementationAsync(
         Logfile logfileToUpload,
         TimeSpan timeOut,
         CancellationToken ct)
@@ -66,7 +65,7 @@ public class LogfileGateway(
         }
         catch (Exception e)
         {
-            return new Error(e.Message);
+            return ResultOf<Logfile>.Failure(e.Message);
         }
     }
 

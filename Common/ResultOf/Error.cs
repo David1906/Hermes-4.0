@@ -1,4 +1,4 @@
-namespace Domain.Core.Errors;
+namespace Common.ResultOf;
 
 public class Error
 {
@@ -14,6 +14,9 @@ public class Error
     public static readonly Error UploadSerialNumbersError = new Error(1009, "Upload serial numbers error");
     public static readonly Error ScanningError = new Error(1010, "Scanning error");
 
+    public int Id { get; }
+    public string Message { get; }
+    
     public Error(string message) : this(Unknown.Id, message)
     {
     }
@@ -27,7 +30,4 @@ public class Error
         Id = id;
         Message = message;
     }
-
-    public int Id { get; }
-    public string Message { get; }
 }

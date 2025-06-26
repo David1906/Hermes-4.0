@@ -1,14 +1,13 @@
 using Common;
-using Domain.Core.Errors;
+using Common.ResultOf;
 using Domain.Logfiles;
-using OneOf;
 
 namespace UseCases.Logfiles;
 
 public class MoveLogfileToBackup(IResilientFileSystem resilientFileSystem)
     : IUseCase<MoveLogfileToBackupCommand, Logfile>
 {
-    public async Task<OneOf<Logfile, Error>> ExecuteAsync(MoveLogfileToBackupCommand command,
+    public async Task<ResultOf<Logfile>> ExecuteAsync(MoveLogfileToBackupCommand command,
         CancellationToken ct = default)
     {
         try
@@ -26,7 +25,7 @@ public class MoveLogfileToBackup(IResilientFileSystem resilientFileSystem)
         }
         catch (Exception e)
         {
-            return new Error(e.Message);
+            return ResultOf<Logfile>.Failure(e.Message);
         }
     }
 }

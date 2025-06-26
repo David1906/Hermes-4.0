@@ -1,7 +1,5 @@
-using Domain.Core.Errors;
+using Common.ResultOf;
 using Domain.Logfiles;
-using OneOf;
-using Common.Extensions;
 using System.Text.RegularExpressions;
 
 namespace UseCases.Logfiles;
@@ -16,13 +14,13 @@ public class AddLogfileToSfc(
     private static readonly Regex RegexIsOk = new(@"^ok[\r\n]+", RgxOptions);
     private static readonly Regex RegexIsEndOfFileError = new(@"end-of-file", RgxOptions);
 
-    public async Task<OneOf<Logfile, Error>> ExecuteAsync(
+    public async Task<ResultOf<Logfile>> ExecuteAsync(
         AddLogfileToSfcCommand command,
         CancellationToken ct = default)
     {
         if (!this.EnsureSfcPathCommunication())
         {
-            return new ConnectionError();
+            return ResultOf<Logfile>.Failure(Error.ConnectionError);
         }
 
         return await logfileGateway.UploadOperationAsync(
@@ -30,11 +28,13 @@ public class AddLogfileToSfc(
                 command.MaxRetries,
                 command.Timeout,
                 ct)
-            .Bind(responseLogfile => MoveLogfileToBackup(responseLogfile, command.BackupDirectory, ct))
+            .Bind((responseLogfile, _) => MoveLogfileToBackup(responseLogfile, command.BackupDirectory, ct), ct)
             .Bind(responseLogfile => ExtractResult(responseLogfile, command.OkResponses));
     }
 
-    private async Task<OneOf<Logfile, Error>> MoveLogfileToBackup(Logfile logfile, DirectoryInfo backupDirectory,
+    private async Task<ResultOf<Logfile>> MoveLogfileToBackup(
+        Logfile logfile,
+        DirectoryInfo backupDirectory,
         CancellationToken ct)
     {
         return await moveLogfileToBackup.ExecuteAsync(
@@ -44,25 +44,25 @@ public class AddLogfileToSfc(
             ct);
     }
 
-    private Task<OneOf<Logfile, Error>> ExtractResult(Logfile responseLogfile, string okResponses)
+    private ResultOf<Logfile> ExtractResult(Logfile responseLogfile, string okResponses)
     {
         if (RegexIsOk.Match(responseLogfile.Content).Success ||
             this.ContainsAdditionalOkSfcResponse(responseLogfile.Content, okResponses))
         {
-            return Task.FromResult<OneOf<Logfile, Error>>(responseLogfile);
+            return responseLogfile;
         }
 
         if (RegexWrongStation.Match(responseLogfile.Content).Success)
         {
-            return Task.FromResult<OneOf<Logfile, Error>>(Error.WrongStation);
+            return ResultOf<Logfile>.Failure(Error.WrongStation);
         }
 
         if (RegexIsEndOfFileError.Match(responseLogfile.Content).Success)
         {
-            return Task.FromResult<OneOf<Logfile, Error>>(Error.EndOfFile);
+            return ResultOf<Logfile>.Failure(Error.EndOfFile);
         }
 
-        return Task.FromResult<OneOf<Logfile, Error>>(Error.Fail);
+        return ResultOf<Logfile>.Failure(Error.Fail);
     }
 
     private bool ContainsAdditionalOkSfcResponse(string content, string okResponses)

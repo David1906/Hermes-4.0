@@ -1,9 +1,8 @@
-using Domain.Core.Errors;
-using OneOf;
+using Common.ResultOf;
 
 namespace Domain.Operations;
 
 public interface IOperationsRepository
 {
-    public Task<OneOf<Operation, Error>> AddAsync(Operation operation, CancellationToken ct);
+    public Task<ResultOf<Operation>> AddAsync(Operation operation, CancellationToken ct);
 }

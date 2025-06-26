@@ -1,11 +1,10 @@
-using Domain.Core.Errors;
-using OneOf;
+using Common.ResultOf;
 
 namespace Domain.Logfiles;
 
 public interface ILogfileGateway
 {
-    Task<OneOf<Logfile, Error>> UploadOperationAsync(
+    Task<ResultOf<Logfile>> UploadOperationAsync(
         Logfile logfileToUpload,
         int maxRetries,
         TimeSpan timeout,

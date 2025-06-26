@@ -1,14 +1,13 @@
-using Domain.Core.Errors;
+using Common.ResultOf;
 using Domain.Operations;
 using Infrastructure.Data.Operations;
 using Infrastructure.Data;
-using OneOf;
 
 namespace UseCases.Operations;
 
 public class AddOperation(SqliteContext sqliteContext) : IUseCase<AddOperationCommand, Operation>
 {
-    public async Task<OneOf<Operation, Error>> ExecuteAsync(AddOperationCommand command, CancellationToken ct = default)
+    public async Task<ResultOf<Operation>> ExecuteAsync(AddOperationCommand command, CancellationToken ct = default)
     {
         try
         {
@@ -19,7 +18,7 @@ public class AddOperation(SqliteContext sqliteContext) : IUseCase<AddOperationCo
         }
         catch (Exception e)
         {
-            return new Error($"Failed to add operation: {e.Message}");
+            return ResultOf<Operation>.Failure($"Failed to add operation: {e.Message}");
         }
     }
 }

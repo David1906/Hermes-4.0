@@ -1,18 +1,18 @@
 ﻿using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.Input;
-using Domain.Core.Errors;
 using Domain.Core.Types;
 using Domain.Logfiles;
 using Domain.Machines;
 using Domain.Users;
-using OneOf;
 using R3;
 using SukiUI.Toasts;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-using Common.Extensions;
+using System.Collections.Generic;
+using System.Linq;
+using Common.ResultOf;
 using Domain.Operations;
 using Infrastructure.Data;
 using UseCases.Logfiles;
@@ -66,7 +66,7 @@ public partial class MainWindowViewModel : ViewModelBase
                     operation => this.ShowToast(
                         $"Operation Id: {operation.Id}, Sn:{operation.MainSerialNumber}",
                         NotificationType.Success),
-                    error => this.ShowToast($"Error : {error.Message}", NotificationType.Error));
+                    errors => this.ShowToast($"Errors : {ConcatErrorMessages(errors)}", NotificationType.Error));
             })
             .AddTo(ref Disposables);
 
@@ -76,14 +76,19 @@ public partial class MainWindowViewModel : ViewModelBase
             .AddTo(ref Disposables);
     }
 
-    private async Task<OneOf<Operation, Error>> ProcessOperation(Logfile logfile, CancellationToken ct)
+    private string ConcatErrorMessages(IEnumerable<Error> errors)
+    {
+        return string.Join("\n", errors.Select(x => x.Message));
+    }
+
+    private async Task<ResultOf<Operation>> ProcessOperation(Logfile logfile, CancellationToken ct)
     {
         return await this.MoveLogfileToBackup(logfile, ct)
-            .Combine(inputLogfile => this.AddLogfileToSfc(inputLogfile, ct))
+            .Combine(this.AddLogfileToSfc, ct)
             .Bind(this.AddOperation, ct);
     }
 
-    private async Task<OneOf<Logfile, Error>> MoveLogfileToBackup(Logfile logfile, CancellationToken ct)
+    private async Task<ResultOf<Logfile>> MoveLogfileToBackup(Logfile logfile, CancellationToken ct)
     {
         return await this._logfilesUseCases.MoveLogfileToBackup.ExecuteAsync(new MoveLogfileToBackupCommand(
             Logfile: logfile,
@@ -91,7 +96,7 @@ public partial class MainWindowViewModel : ViewModelBase
         ), ct);
     }
 
-    private async Task<OneOf<Logfile, Error>> AddLogfileToSfc(Logfile logfile, CancellationToken ct)
+    private async Task<ResultOf<Logfile>> AddLogfileToSfc(Logfile logfile, CancellationToken ct)
     {
         Console.WriteLine($@"Start: {DateTime.Now:HH:mm:ss.fff}");
         var response = await _logfilesUseCases.AddLogfileToSfc.ExecuteAsync(
@@ -106,7 +111,7 @@ public partial class MainWindowViewModel : ViewModelBase
         return response;
     }
 
-    private async Task<OneOf<Operation, Error>> AddOperation(
+    private async Task<ResultOf<Operation>> AddOperation(
         (Logfile input, Logfile response) logfiles,
         CancellationToken ct)
     {
@@ -142,7 +147,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         result.Switch(
             userDto => this.ShowToast($"User {userDto.Name} added successfully.", NotificationType.Success),
-            error => this.ShowToast(error.Message, NotificationType.Error)
+            errors => this.ShowToast(ConcatErrorMessages(errors), NotificationType.Error)
         );
     }
 

@@ -1,20 +1,19 @@
-using Common;
 using Common.Extensions;
+using Common.ResultOf;
 using Common.Serial;
+using Common;
 using Domain.Builders;
-using Domain.Core.Errors;
 using Domain.Core.Types;
 using Domain.Logfiles;
 using Domain.Machines;
 using Infrastructure.Scanners;
-using OneOf;
 using R3;
 
 namespace Infrastructure.Machines;
 
 public class GkgMachine : IMachine, IDisposable
 {
-    public Subject<OneOf<Logfile, Error>> LogfileCreated { get; } = new();
+    public Subject<ResultOf<Logfile>> LogfileCreated { get; } = new();
     public BehaviorSubject<StateType> State { get; } = new(StateType.Stopped);
 
     private readonly SerialPortRx _serialPortRx;
@@ -72,7 +71,8 @@ public class GkgMachine : IMachine, IDisposable
         var serialNumber = await this._serialScanner.ScanAsync();
         if (this._serialScanner.IsReadError(serialNumber))
         {
-            this.LogfileCreated.OnNext(Error.ScanningError);
+            this.LogfileCreated.OnNext(
+                ResultOf<Logfile>.Failure(Error.ScanningError));
         }
         else
         {

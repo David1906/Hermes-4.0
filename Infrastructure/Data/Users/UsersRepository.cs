@@ -1,12 +1,11 @@
-using Domain.Core.Errors;
+using Common.ResultOf;
 using Domain.Users;
-using OneOf;
 
 namespace Infrastructure.Data.Users;
 
 public class UsersRepository : IUsersRepository
 {
-    public async Task<OneOf<User, Error>> AddAsync(AddUserRequest request, CancellationToken ct = default)
+    public async Task<ResultOf<User>> AddAsync(AddUserRequest request, CancellationToken ct = default)
     {
         return new User
         {
