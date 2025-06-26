@@ -15,7 +15,6 @@ using System.Linq;
 using Common.ResultOf;
 using Domain.Operations;
 using Infrastructure.Data;
-using UseCases.Logfiles;
 using UseCases.Operations;
 using UseCases.Users;
 
@@ -32,23 +31,17 @@ public partial class MainWindowViewModel : ViewModelBase
     public BindableReactiveProperty<bool> IsConnected { get; } = new(false);
 
     private readonly UserUseCases _userUseCases;
-    private readonly LogfilesUseCases _logfilesUseCases;
     private readonly OperationsUseCases _operationsUseCases;
     private readonly IMachine _machine;
-    private readonly TriOperationParser _triOperationParser;
 
     public MainWindowViewModel(
         UserUseCases userUseCases,
-        LogfilesUseCases logfilesUseCases,
         OperationsUseCases operationsUseCases,
-        TriOperationParser triOperationParser,
         SqliteContext sqliteContext,
         IMachine machine)
     {
         this._userUseCases = userUseCases;
-        this._logfilesUseCases = logfilesUseCases;
         this._operationsUseCases = operationsUseCases;
-        this._triOperationParser = triOperationParser;
         this._machine = machine;
         sqliteContext.Migrate();
         this.SetupRx();
@@ -60,13 +53,11 @@ public partial class MainWindowViewModel : ViewModelBase
             .SubscribeAwait(async (inputLogfile, ct) =>
             {
                 var res = await inputLogfile
-                    .Bind(this.ProcessOperation, ct);
-
-                res.Switch(
-                    operation => this.ShowToast(
-                        $"Operation Id: {operation.Id}, Sn:{operation.MainSerialNumber}",
-                        NotificationType.Success),
-                    errors => this.ShowToast($"Errors : {ConcatErrorMessages(errors)}", NotificationType.Error));
+                    .Bind(this.ProcessOperation, ct)
+                    .OnSuccess(x =>
+                        this.ShowToast($"Operation Id: {x.Id}, Sn:{x.MainSerialNumber}", NotificationType.Success))
+                    .OnFailure(errors =>
+                        this.ShowToast($"Errors : {ConcatErrorMessages(errors)}", NotificationType.Error));
             })
             .AddTo(ref Disposables);
 
@@ -83,43 +74,17 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private async Task<ResultOf<Operation>> ProcessOperation(Logfile logfile, CancellationToken ct)
     {
-        return await this.MoveLogfileToBackup(logfile, ct)
-            .Combine(this.AddLogfileToSfc, ct)
-            .Bind(this.AddOperation, ct);
-    }
-
-    private async Task<ResultOf<Logfile>> MoveLogfileToBackup(Logfile logfile, CancellationToken ct)
-    {
-        return await this._logfilesUseCases.MoveLogfileToBackup.ExecuteAsync(new MoveLogfileToBackupCommand(
-            Logfile: logfile,
-            DestinationDirectory: new DirectoryInfo(BackupPath)
-        ), ct);
-    }
-
-    private async Task<ResultOf<Logfile>> AddLogfileToSfc(Logfile logfile, CancellationToken ct)
-    {
         Console.WriteLine($@"Start: {DateTime.Now:HH:mm:ss.fff}");
-        var response = await _logfilesUseCases.AddLogfileToSfc.ExecuteAsync(
-            new AddLogfileToSfcCommand(
-                LogfileToUpload: logfile,
+        var response = await _operationsUseCases.ProcessOperation.ExecuteAsync(
+            new ProcessOperationCommand(
+                InputLogfile: logfile,
+                BackupDirectory: new DirectoryInfo(BackupPath),
                 OkResponses: "OK",
                 Timeout: TimeSpan.FromSeconds(5),
-                BackupDirectory: new DirectoryInfo(BackupPath),
                 MaxRetries: 0),
             ct);
         Console.WriteLine($@"End: {DateTime.Now:HH:mm:ss.fff}");
         return response;
-    }
-
-    private async Task<ResultOf<Operation>> AddOperation(
-        (Logfile input, Logfile response) logfiles,
-        CancellationToken ct)
-    {
-        var operation = this._triOperationParser.Parse(logfiles.input);
-        operation.UploadLogfile = logfiles.response;
-        return await this._operationsUseCases.AddOperation.ExecuteAsync(new AddOperationCommand(
-            operation
-        ), ct);
     }
 
     [RelayCommand]

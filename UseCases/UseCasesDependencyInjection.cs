@@ -19,6 +19,7 @@ public static class UseCasesDependencyInjection
 
     private static IServiceCollection AddOperationsUseCases(this IServiceCollection services) => services
         .AddTransient<OperationsUseCases>()
+        .AddTransient<ProcessOperation>()
         .AddTransient<AddOperation>();
 
     private static IServiceCollection AddUserUseCases(this IServiceCollection services)

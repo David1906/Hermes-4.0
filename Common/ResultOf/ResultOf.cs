@@ -7,10 +7,12 @@ namespace Common.ResultOf;
 public class ResultOf<T> : OneOfBase<T, ImmutableArray<Error>>
 {
     public bool IsSuccess => this.IsT0;
+    public bool IsFailure => !this.IsSuccess;
 
     public IEnumerable<Error> Errors => this.IsT1
         ? this.AsT1
         : ImmutableArray<Error>.Empty;
+
 
     /// <summary>
     /// Implicitly converts a value of type T to a successful result with an HTTP status code of OK.
