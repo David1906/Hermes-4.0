@@ -1,5 +1,5 @@
-using Data;
 using Domain.Users;
+using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using UseCases.Users;
 using UseCases;

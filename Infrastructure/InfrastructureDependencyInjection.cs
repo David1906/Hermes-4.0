@@ -1,13 +1,14 @@
-using Data.Data.Users;
-using Data.Gateways;
-using Data.Machines;
-using Data.Scanners;
 using Domain.Logfiles;
 using Domain.Machines;
 using Domain.Scanners;
+using Infrastructure.Data;
+using Infrastructure.Data.Users;
+using Infrastructure.Gateways;
+using Infrastructure.Machines;
+using Infrastructure.Scanners;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Data;
+namespace Infrastructure;
 
 public static class InfrastructureDependencyInjection
 {
@@ -15,5 +16,6 @@ public static class InfrastructureDependencyInjection
         .AddScoped<IUsersRepository, UsersRepository>()
         .AddScoped<ILogfileGateway, LogfileGateway>()
         .AddScoped<ISerialScannerRx, SerialScannerRx>()
+        .AddScoped<SqliteContext>()
         .AddScoped<IMachine, GkgMachine>();
 }

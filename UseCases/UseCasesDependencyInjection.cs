@@ -17,8 +17,9 @@ public static class UseCasesDependencyInjection
             .AddTransient<AddLogfileToSfc>()
             .AddTransient<MoveLogfileToBackup>();
 
-    private static IServiceCollection AddOperationsUseCases(this IServiceCollection services)
-        => services.AddTransient<OperationsUseCases>();
+    private static IServiceCollection AddOperationsUseCases(this IServiceCollection services) => services
+        .AddTransient<OperationsUseCases>()
+        .AddTransient<AddOperation>();
 
     private static IServiceCollection AddUserUseCases(this IServiceCollection services)
         => services.AddScoped<UserUseCases>()

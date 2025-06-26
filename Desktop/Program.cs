@@ -3,13 +3,13 @@ using System;
 using System.IO;
 using Common;
 using Common.Serial;
-using Data;
-using Data.Machines;
-using Data.Scanners;
 using Desktop.ViewModels;
 using Domain.Core.Types;
 using Domain.Logfiles;
 using Domain.Machines;
+using Domain.Operations;
+using Infrastructure;
+using Infrastructure.Scanners;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UseCases;
@@ -38,6 +38,7 @@ sealed class Program
         applicationBuilder.Services.AddTransient<SerialPortAsync>();
         applicationBuilder.Services.AddTransient<SerialPortRx>();
         applicationBuilder.Services.AddTransient<SerialScannerRx>();
+        applicationBuilder.Services.AddTransient<TriOperationParser>();
         applicationBuilder.Services.AddSingleton<IResilientFileSystem, ResilientFileSystem>();
         applicationBuilder.Services.AddTransient<IFileSystemWatcherRx, FileSystemWatcherRx>();
         applicationBuilder.Services.AddSingleton<LogfileGatewayOptions>(_ =>

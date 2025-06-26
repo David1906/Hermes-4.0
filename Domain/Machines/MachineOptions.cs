@@ -10,4 +10,5 @@ public class MachineOptions
     public MachineType MachineType { get; set; } = MachineType.Aoi;
     public MachineBrand MachineBrand { get; set; } = MachineBrand.Tri;
     public FileExtensionType LogFileExtension { get; set; } = FileExtensionType._3dx;
+    public DirectoryInfo LogfileDirectory { get; set; } = new("./");
 }

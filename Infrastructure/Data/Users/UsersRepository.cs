@@ -2,7 +2,7 @@ using Domain.Core.Errors;
 using Domain.Users;
 using OneOf;
 
-namespace Data.Data.Users;
+namespace Infrastructure.Data.Users;
 
 public class UsersRepository : IUsersRepository
 {

@@ -58,6 +58,7 @@ public class ResilientFileSystem : IResilientFileSystem
     public async Task<string> MoveFileAsync(string originFullPath, string destinationFullPath,
         CancellationToken ct = default)
     {
+        if (originFullPath == destinationFullPath) return originFullPath;
         return await _retryPipeline.ExecuteAsync(async ct1 =>
         {
             return await Task.Run(() =>
@@ -94,7 +95,7 @@ public class ResilientFileSystem : IResilientFileSystem
         }, ct);
     }
 
-    public async Task WriteAllTextAsync(string destinationFullPath, string content, CancellationToken ct)
+    public async Task WriteAllTextAsync(string destinationFullPath, string content, CancellationToken ct = default)
     {
         CreateDirectoryIfNotExists(destinationFullPath);
         await File.WriteAllTextAsync(destinationFullPath, content, ct);

@@ -3,7 +3,7 @@ namespace Domain.Logfiles;
 public class Logfile
 {
     public int Id { get; init; }
-    public required string Content { get; set; }
+    public string Content { get; set; } = "";
     public required FileInfo FileInfo { get; set; }
 
     public string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(this.FileInfo.FullName);

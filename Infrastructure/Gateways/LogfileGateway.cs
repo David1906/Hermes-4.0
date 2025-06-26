@@ -5,7 +5,7 @@ using OneOf;
 using R3;
 using Error = Domain.Core.Errors.Error;
 
-namespace Data.Gateways;
+namespace Infrastructure.Gateways;
 
 public class LogfileGateway(
     LogfileGatewayOptions options,

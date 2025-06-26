@@ -2,9 +2,9 @@
 left to right direction
 
 usecase (ProcessLogfile)
+usecase (MoveLogfileToBackup)
 usecase (UploadLogfileToSfc)
 usecase (SendUutInConveyor)
-usecase (MoveLogfileToBackup)
 usecase (AddUutSerialNumbers)
 usecase (LockMachine)
 usecase (UnlockMachine)
@@ -21,10 +21,11 @@ usecase (AddOperation)
 :Machine: --> (ProcessLogfile)
 (ProcessLogfile) ..> (UploadLogfileToSfc) : "include"
 (ProcessLogfile) ..> (SendUutInConveyor) : "include"
-(ProcessLogfile) ..> (MoveLogfileToBackup) : "include"
 (ProcessLogfile) ..> (AddUutSerialNumbers) : "include"
 (ProcessLogfile) ..> (LockMachine) : "include"
 (ProcessLogfile) ..> (ShowOperationResult) : "include"
 (ProcessLogfile) ..> (AddOperation) : "include"
+
+(UploadLogfileToSfc) ..> (MoveLogfileToBackup) : "include"
 
 @enduml

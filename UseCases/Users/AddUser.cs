@@ -1,6 +1,6 @@
-using Data.Data.Users;
 using Domain.Core.Errors;
 using Domain.Users;
+using Infrastructure.Data.Users;
 using OneOf;
 
 namespace UseCases.Users;

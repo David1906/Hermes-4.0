@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls.Notifications;
-using Common;
 using CommunityToolkit.Mvvm.Input;
 using Domain.Core.Errors;
 using Domain.Core.Types;
@@ -13,13 +12,18 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using Common.Extensions;
+using Domain.Operations;
+using Infrastructure.Data;
 using UseCases.Logfiles;
+using UseCases.Operations;
 using UseCases.Users;
 
 namespace Desktop.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
+    private const string BackupPath = @"C:\Users\david_ascencio\Documents\dev\Hermes\Backup";
     public ISukiToastManager ToastManager { get; } = new SukiToastManager();
     public string Email { get; set; } = "";
     public string Name { get; set; } = "";
@@ -29,30 +33,40 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private readonly UserUseCases _userUseCases;
     private readonly LogfilesUseCases _logfilesUseCases;
-    private readonly IResilientFileSystem _resilientFileSystem;
+    private readonly OperationsUseCases _operationsUseCases;
     private readonly IMachine _machine;
+    private readonly TriOperationParser _triOperationParser;
 
     public MainWindowViewModel(
         UserUseCases userUseCases,
         LogfilesUseCases logfilesUseCases,
-        IResilientFileSystem resilientFileSystem, // TODO: Remove this dependency if not needed,
+        OperationsUseCases operationsUseCases,
+        TriOperationParser triOperationParser,
+        SqliteContext sqliteContext,
         IMachine machine)
     {
         this._userUseCases = userUseCases;
         this._logfilesUseCases = logfilesUseCases;
-        this._resilientFileSystem = resilientFileSystem;
+        this._operationsUseCases = operationsUseCases;
+        this._triOperationParser = triOperationParser;
         this._machine = machine;
+        sqliteContext.Migrate();
         this.SetupRx();
     }
 
     private void SetupRx()
     {
         this._machine.LogfileCreated
-            .SubscribeAwait(async (result, ct) =>
+            .SubscribeAwait(async (inputLogfile, ct) =>
             {
-                await result.Match<Task>(
-                    logfile => this.ProcessLogfile(logfile, ct),
-                    this.ProcessError);
+                var res = await inputLogfile
+                    .Bind(this.ProcessOperation, ct);
+
+                res.Switch(
+                    operation => this.ShowToast(
+                        $"Operation Id: {operation.Id}, Sn:{operation.MainSerialNumber}",
+                        NotificationType.Success),
+                    error => this.ShowToast($"Error : {error.Message}", NotificationType.Error));
             })
             .AddTo(ref Disposables);
 
@@ -62,9 +76,19 @@ public partial class MainWindowViewModel : ViewModelBase
             .AddTo(ref Disposables);
     }
 
-    private async Task ProcessLogfile(Logfile logfile, CancellationToken ct)
+    private async Task<OneOf<Operation, Error>> ProcessOperation(Logfile logfile, CancellationToken ct)
     {
-        await this.AddLogfileToSfc(logfile, ct);
+        return await this.MoveLogfileToBackup(logfile, ct)
+            .Combine(inputLogfile => this.AddLogfileToSfc(inputLogfile, ct))
+            .Bind(this.AddOperation, ct);
+    }
+
+    private async Task<OneOf<Logfile, Error>> MoveLogfileToBackup(Logfile logfile, CancellationToken ct)
+    {
+        return await this._logfilesUseCases.MoveLogfileToBackup.ExecuteAsync(new MoveLogfileToBackupCommand(
+            Logfile: logfile,
+            DestinationDirectory: new DirectoryInfo(BackupPath)
+        ), ct);
     }
 
     private async Task<OneOf<Logfile, Error>> AddLogfileToSfc(Logfile logfile, CancellationToken ct)
@@ -75,25 +99,22 @@ public partial class MainWindowViewModel : ViewModelBase
                 LogfileToUpload: logfile,
                 OkResponses: "OK",
                 Timeout: TimeSpan.FromSeconds(5),
-                BackupDirectory: new DirectoryInfo(@"C:\Users\david_ascencio\Documents\dev\Hermes\Backup\"),
+                BackupDirectory: new DirectoryInfo(BackupPath),
                 MaxRetries: 0),
             ct);
-
-        response.Switch(
-            success =>
-            {
-                this.ShowToast($"File: {logfile.FileInfo.Name} Result: {success}",
-                    NotificationType.Success);
-            },
-            error => { this.ShowToast($"Error: {error.Message}", NotificationType.Error); });
         Console.WriteLine($@"End: {DateTime.Now:HH:mm:ss.fff}");
         return response;
     }
 
-    private Task ProcessError(Error error)
+    private async Task<OneOf<Operation, Error>> AddOperation(
+        (Logfile input, Logfile response) logfiles,
+        CancellationToken ct)
     {
-        this.ShowToast($"Error : {error.Message}", NotificationType.Error);
-        return Task.FromResult<OneOf<Logfile, Error>>(error);
+        var operation = this._triOperationParser.Parse(logfiles.input);
+        operation.UploadLogfile = logfiles.response;
+        return await this._operationsUseCases.AddOperation.ExecuteAsync(new AddOperationCommand(
+            operation
+        ), ct);
     }
 
     [RelayCommand]

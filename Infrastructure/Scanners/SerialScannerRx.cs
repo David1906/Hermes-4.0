@@ -3,7 +3,7 @@ using Domain.Core.Types;
 using Domain.Scanners;
 using R3;
 
-namespace Data.Scanners;
+namespace Infrastructure.Scanners;
 
 public class SerialScannerRx : ISerialScannerRx
 {

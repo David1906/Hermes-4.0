@@ -1,15 +1,16 @@
+using Common;
 using Common.Extensions;
 using Common.Serial;
-using Data.Scanners;
 using Domain.Builders;
 using Domain.Core.Errors;
 using Domain.Core.Types;
 using Domain.Logfiles;
 using Domain.Machines;
+using Infrastructure.Scanners;
 using OneOf;
 using R3;
 
-namespace Data.Machines;
+namespace Infrastructure.Machines;
 
 public class GkgMachine : IMachine, IDisposable
 {
@@ -18,6 +19,7 @@ public class GkgMachine : IMachine, IDisposable
 
     private readonly SerialPortRx _serialPortRx;
     private readonly SerialScannerRx _serialScanner;
+    private readonly IResilientFileSystem _fileSystem;
     private readonly GkgMachineOptions _gkgMachineOptions;
     private readonly MachineOptions _machineOptions;
     private DisposableBag _disposables;
@@ -25,11 +27,13 @@ public class GkgMachine : IMachine, IDisposable
     public GkgMachine(
         SerialPortRx serialPortRx,
         SerialScannerRx serialScanner,
+        IResilientFileSystem fileSystem,
         GkgMachineOptions gkgMachineGkgMachineOptions,
         MachineOptions machineOptions)
     {
         this._serialPortRx = serialPortRx;
         this._serialScanner = serialScanner;
+        this._fileSystem = fileSystem;
         this._gkgMachineOptions = gkgMachineGkgMachineOptions;
         this._machineOptions = machineOptions;
         this.SetupSerialPorts();
@@ -62,7 +66,7 @@ public class GkgMachine : IMachine, IDisposable
             .AddTo(ref _disposables);
     }
 
-    private async Task OnTriggerReceivedAsync(CancellationToken _)
+    private async Task OnTriggerReceivedAsync(CancellationToken ct)
     {
         this.State.OnNext(StateType.Scanning);
         var serialNumber = await this._serialScanner.ScanAsync();
@@ -76,15 +80,27 @@ public class GkgMachine : IMachine, IDisposable
                 .SerialNumber(serialNumber)
                 .StationId(this._machineOptions.StationId)
                 .Build();
-            this.LogfileCreated.OnNext(new Logfile
-            {
-                Content = logfileText,
-                FileInfo = new FileInfo(
-                    $"{serialNumber.Trim()}_{DateTime.Now:hh_mm_ss}{this._machineOptions.LogFileExtension.GetDescription()}")
-            });
+            var logfile = await this.CreateAndWriteLogfileAsync(serialNumber, logfileText, ct);
+            this.LogfileCreated.OnNext(logfile);
         }
 
         this.State.OnNext(StateType.Idle);
+    }
+
+    private async Task<Logfile> CreateAndWriteLogfileAsync(
+        string serialNumber,
+        string logfileText,
+        CancellationToken ct)
+    {
+        var logfileFullpath = Path.Combine(
+            this._machineOptions.LogfileDirectory.FullName,
+            $"{serialNumber.Trim()}_{DateTime.Now:hh_mm_ss}{this._machineOptions.LogFileExtension.GetDescription()}");
+        await this._fileSystem.WriteAllTextAsync(logfileFullpath, logfileText, ct);
+        return new Logfile
+        {
+            Content = logfileText,
+            FileInfo = new FileInfo(logfileFullpath)
+        };
     }
 
     public void Start()

@@ -1,17 +1,18 @@
-using Domain.Boards;
 using Domain.Core.Types;
-using Domain.Logfiles;
+using Infrastructure.Data.Boards;
+using Infrastructure.Data.Logfiles;
+using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Operations;
+namespace Infrastructure.Data.Operations;
 
-public class OperationDto
+public class OperationDbModel
 {
-    public int Id { get; set; }
-    public List<Board> Boards { get; set; } = [];
+    [Key] public int Id { get; set; }
+    public List<BoardDbModel> Boards { get; set; } = [];
     public OperationResultType Result { get; set; } = OperationResultType.Unknown;
-    public Logfile? Logfile { get; set; }
+    public LogfileDbModel? Logfile { get; set; }
     public UploadResultType UploadResult { get; set; } = UploadResultType.Unknown;
-    public Logfile? UploadResponse { get; set; }
+    public LogfileDbModel? UploadLogfile { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool SkipForSampling { get; set; }
     public bool IsAutoSend { get; set; }
