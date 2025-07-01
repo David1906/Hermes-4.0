@@ -1,20 +1,19 @@
 ﻿using Avalonia.Controls.Notifications;
+using Common.Extensions;
+using Common.ResultOf;
 using CommunityToolkit.Mvvm.Input;
 using Domain.Core.Types;
 using Domain.Logfiles;
 using Domain.Machines;
+using Domain.Operations;
 using Domain.Users;
+using Infrastructure.Data;
 using R3;
 using SukiUI.Toasts;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Common.ResultOf;
-using Domain.Operations;
-using Infrastructure.Data;
 using UseCases.Operations;
 using UseCases.Users;
 
@@ -52,12 +51,11 @@ public partial class MainWindowViewModel : ViewModelBase
         this._machine.LogfileCreated
             .SubscribeAwait(async (inputLogfile, ct) =>
             {
-                var res = await inputLogfile
+                await inputLogfile
                     .Bind(this.ProcessOperation, ct)
-                    .OnSuccess(x =>
-                        this.ShowToast($"Operation Id: {x.Id}, Sn:{x.MainSerialNumber}", NotificationType.Success))
-                    .OnFailure(errors =>
-                        this.ShowToast($"Errors : {ConcatErrorMessages(errors)}", NotificationType.Error));
+                    .Switch(
+                        x => this.ShowToast($"Operation Id: {x.Id}, Sn:{x.MainSerialNumber}", NotificationType.Success),
+                        errors => this.ShowToast($"Errors : {errors.JoinWithNewLine()}", NotificationType.Error));
             })
             .AddTo(ref Disposables);
 
@@ -67,17 +65,13 @@ public partial class MainWindowViewModel : ViewModelBase
             .AddTo(ref Disposables);
     }
 
-    private string ConcatErrorMessages(IEnumerable<Error> errors)
-    {
-        return string.Join("\n", errors.Select(x => x.Message));
-    }
-
     private async Task<ResultOf<Operation>> ProcessOperation(Logfile logfile, CancellationToken ct)
     {
         Console.WriteLine($@"Start: {DateTime.Now:HH:mm:ss.fff}");
-        var response = await _operationsUseCases.ProcessOperation.ExecuteAsync(
+        var response = await _operationsUseCases.ProcessOperationUseCase.ExecuteAsync(
             new ProcessOperationCommand(
                 InputLogfile: logfile,
+                LogfileType.TriDefault,
                 BackupDirectory: new DirectoryInfo(BackupPath),
                 OkResponses: "OK",
                 Timeout: TimeSpan.FromSeconds(5),
@@ -112,7 +106,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         result.Switch(
             userDto => this.ShowToast($"User {userDto.Name} added successfully.", NotificationType.Success),
-            errors => this.ShowToast(ConcatErrorMessages(errors), NotificationType.Error)
+            errors => this.ShowToast(errors.JoinWithNewLine(), NotificationType.Error)
         );
     }
 

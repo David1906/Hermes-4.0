@@ -7,5 +7,4 @@ public class BoardDbModel
 {
     [Key] public int Id { get; set; }
     [StringLength(124)] public string SerialNumber { get; set; } = "";
-    public List<DefectDbModel> Defects { get; set; } = [];
 }

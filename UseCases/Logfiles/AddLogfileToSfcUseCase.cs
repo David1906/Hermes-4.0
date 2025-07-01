@@ -4,8 +4,8 @@ using System.Text.RegularExpressions;
 
 namespace UseCases.Logfiles;
 
-public class AddLogfileToSfc(
-    ILogfileGateway logfileGateway,
+public class AddLogfileToSfcUseCase(
+    ILogfilesSfcGateway logfilesSfcGateway,
     MoveLogfileToBackup moveLogfileToBackup
 ) : IUseCase<AddLogfileToSfcCommand, Logfile>
 {
@@ -23,7 +23,7 @@ public class AddLogfileToSfc(
             return ResultOf<Logfile>.Failure(Error.ConnectionError);
         }
 
-        return await logfileGateway.UploadOperationAsync(
+        return await logfilesSfcGateway.UploadOperationAsync(
                 command.LogfileToUpload,
                 command.MaxRetries,
                 command.Timeout,

@@ -5,13 +5,13 @@ namespace Infrastructure.Data.Users;
 
 public class UsersRepository : IUsersRepository
 {
-    public async Task<ResultOf<User>> AddAsync(AddUserRequest request, CancellationToken ct = default)
+    public Task<ResultOf<User>> AddAsync(AddUserRequest request, CancellationToken ct = default)
     {
-        return new User
+        return Task.FromResult<ResultOf<User>>(new User
         {
             Email = request.Email,
             Name = request.Name,
             Age = request.Age
-        };
+        });
     }
 }

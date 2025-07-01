@@ -6,11 +6,11 @@ using R3;
 
 namespace Infrastructure.Gateways;
 
-public class LogfileGateway(
-    LogfileGatewayOptions options,
+public class LogfilesSfcGateway(
+    LogfilesGatewayOptions options,
     TimeProvider timeProvider,
     IFileSystemWatcherRx fileSystemWatcherRx,
-    IResilientFileSystem resilientFileSystem) : ILogfileGateway
+    IResilientFileSystem resilientFileSystem) : ILogfilesSfcGateway
 {
     public async Task<ResultOf<Logfile>> UploadOperationAsync(
         Logfile logfileToUpload,

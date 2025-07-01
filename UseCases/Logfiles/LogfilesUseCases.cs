@@ -1,5 +1,5 @@
 namespace UseCases.Logfiles;
 
 public record LogfilesUseCases(
-    AddLogfileToSfc AddLogfileToSfc,
+    AddLogfileToSfcUseCase AddLogfileToSfcUseCase,
     MoveLogfileToBackup MoveLogfileToBackup);

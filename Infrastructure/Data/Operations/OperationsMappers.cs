@@ -1,6 +1,8 @@
-using Domain.Logfiles;
+using Domain.OperationTasks;
 using Domain.Operations;
-using Infrastructure.Data.Logfiles;
+using Domain.Panels;
+using Infrastructure.Data.OperationTasks;
+using Infrastructure.Data.Panels;
 using Riok.Mapperly.Abstractions;
 
 namespace Infrastructure.Data.Operations;
@@ -8,26 +10,25 @@ namespace Infrastructure.Data.Operations;
 [Mapper]
 public static partial class OperationsMappers
 {
+    [MapperIgnoreSource(nameof(Operation.MainSerialNumber))]
+    [MapProperty(
+        nameof(Operation.Tasks),
+        nameof(OperationDbModel.Tasks),
+        Use = nameof(OperationTaskFromDomainModelToDbModel))]
     public static partial OperationDbModel ToDbModel(this Operation operation);
 
-    [MapperIgnoreSource(nameof(Logfile.FileNameWithoutExtension))]
-    [MapperIgnoreSource(nameof(Logfile.Content))]
-    [MapperIgnoreSource(nameof(Logfile.IsEmpty))]
-    [MapperIgnoreSource(nameof(Logfile.FullName))]
-    [MapperIgnoreSource(nameof(Logfile.Name))]
-    [MapperIgnoreSource(nameof(Logfile.Exists))]
-    [MapProperty(nameof(Logfile.FileInfo), nameof(LogfileDbModel.FileInfo), Use = nameof(MapFileInfo))]
-    public static partial LogfileDbModel ToDbModel(this Logfile operation);
+    private static List<OperationTaskDbModel> OperationTaskFromDomainModelToDbModel(List<OperationTask> logfileDbModel)
+        => logfileDbModel.Select(x => x.ToDbModel()).ToList();
 
-    private static string MapFileInfo(FileInfo fileInfo)
-        => fileInfo.FullName;
+    [MapperIgnoreSource(nameof(Panel.MainSerialNumber))]
+    public static partial PanelDbModel ToDbModel(this Panel panel);
 
+    [MapProperty(
+        nameof(OperationDbModel.Tasks),
+        nameof(Operation.Tasks),
+        Use = nameof(OperationTaskFromDbModelToDomainModel))]
     public static partial Operation ToDomainModel(this OperationDbModel operationDbModel);
 
-    [MapperIgnoreTarget("Content")]
-    [MapProperty(nameof(LogfileDbModel.FileInfo), nameof(Logfile.FileInfo), Use = nameof(MapStringToFileInfo))]
-    public static partial Logfile ToDomainModel(this LogfileDbModel logfileDbModel);
-
-    private static FileInfo MapStringToFileInfo(string fullPath)
-        => new FileInfo(fullPath);
+    private static List<OperationTask> OperationTaskFromDbModelToDomainModel(List<OperationTaskDbModel> logfileDbModel)
+        => logfileDbModel.Select(x => x.ToDomainModel()).ToList();
 }

@@ -2,7 +2,7 @@ using Common.ResultOf;
 
 namespace Domain.Logfiles;
 
-public interface ILogfileGateway
+public interface ILogfilesSfcGateway
 {
     Task<ResultOf<Logfile>> UploadOperationAsync(
         Logfile logfileToUpload,

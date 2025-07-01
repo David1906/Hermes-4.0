@@ -1,7 +1,9 @@
 using Infrastructure.Data.Boards;
 using Infrastructure.Data.Defects;
 using Infrastructure.Data.Logfiles;
+using Infrastructure.Data.OperationTasks;
 using Infrastructure.Data.Operations;
+using Infrastructure.Data.Panels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
@@ -9,6 +11,8 @@ namespace Infrastructure.Data;
 public class SqliteContext : DbContext
 {
     public DbSet<OperationDbModel> Operations { get; set; }
+    public DbSet<OperationTaskDbModel> OperationTasks { get; set; }
+    public DbSet<PanelDbModel> Panels { get; set; }
     public DbSet<BoardDbModel> Boards { get; set; }
     public DbSet<LogfileDbModel> Logfiles { get; set; }
     public DbSet<DefectDbModel> Defects { get; set; }
@@ -43,6 +47,8 @@ public class SqliteContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<OperationDbModel>().ToTable("Operations");
+        modelBuilder.Entity<OperationTaskDbModel>().ToTable("OperationTasks");
+        modelBuilder.Entity<PanelDbModel>().ToTable("Panels");
         modelBuilder.Entity<BoardDbModel>().ToTable("Boards");
         modelBuilder.Entity<LogfileDbModel>().ToTable("Logfiles");
         modelBuilder.Entity<DefectDbModel>().ToTable("Defects");

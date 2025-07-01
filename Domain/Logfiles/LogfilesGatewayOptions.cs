@@ -2,7 +2,7 @@ using Domain.Core.Types;
 
 namespace Domain.Logfiles;
 
-public class LogfileGatewayOptions
+public class LogfilesGatewayOptions
 {
     public required DirectoryInfo BaseDirectory { get; set; } =
         new DirectoryInfo(@"C:\Users\david_ascencio\Documents\dev\Hermes\Sfc");

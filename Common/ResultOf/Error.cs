@@ -16,7 +16,7 @@ public class Error
 
     public int Id { get; }
     public string Message { get; }
-    
+
     public Error(string message) : this(Unknown.Id, message)
     {
     }
@@ -29,5 +29,10 @@ public class Error
     {
         Id = id;
         Message = message;
+    }
+
+    public override string ToString()
+    {
+        return $"{Id}: {Message}";
     }
 }

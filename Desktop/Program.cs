@@ -41,9 +41,9 @@ sealed class Program
         applicationBuilder.Services.AddTransient<TriOperationParser>();
         applicationBuilder.Services.AddSingleton<IResilientFileSystem, ResilientFileSystem>();
         applicationBuilder.Services.AddTransient<IFileSystemWatcherRx, FileSystemWatcherRx>();
-        applicationBuilder.Services.AddSingleton<LogfileGatewayOptions>(_ =>
+        applicationBuilder.Services.AddSingleton<LogfilesGatewayOptions>(_ =>
         {
-            return new LogfileGatewayOptions
+            return new LogfilesGatewayOptions
             {
                 BaseDirectory = new DirectoryInfo(@"C:\Users\david_ascencio\Documents\dev\Hermes\Sfc"),
                 ResponseExtensionType = FileExtensionType.Log

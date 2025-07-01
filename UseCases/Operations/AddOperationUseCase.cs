@@ -5,7 +5,7 @@ using Infrastructure.Data;
 
 namespace UseCases.Operations;
 
-public class AddOperation(SqliteContext sqliteContext) : IUseCase<AddOperationCommand, Operation>
+public class AddOperationUseCase(SqliteContext sqliteContext) : IUseCase<AddOperationCommand, Operation>
 {
     public async Task<ResultOf<Operation>> ExecuteAsync(AddOperationCommand command, CancellationToken ct = default)
     {

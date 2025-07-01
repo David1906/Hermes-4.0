@@ -13,6 +13,10 @@ public class ResultOf<T> : OneOfBase<T, ImmutableArray<Error>>
         ? this.AsT1
         : ImmutableArray<Error>.Empty;
 
+    public T SuccessValue => this.IsT0
+        ? this.AsT0
+        : throw new InvalidOperationException("Cannot access SuccessValue when the result is a failure.");
+
 
     /// <summary>
     /// Implicitly converts a value of type T to a successful result with an HTTP status code of OK.
