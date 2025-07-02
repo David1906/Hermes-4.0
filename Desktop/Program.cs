@@ -12,6 +12,7 @@ using Infrastructure;
 using Infrastructure.Scanners;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Paramore.Brighter.Extensions.DependencyInjection;
 using UseCases;
 
 namespace Desktop;
@@ -30,9 +31,14 @@ sealed class Program
         applicationBuilder.Services
             .AddViewModels()
             .AddInfrastructure()
-            .AddUseCases();
+            .AddUseCases()
+            .AddBrighter()
+            .AutoFromAssemblies();
 
         // TODO
+        applicationBuilder.Services.AddSingleton<NotificationsHandler>();
+        applicationBuilder.Services.AddTransient<OperationCreatedHandler>();
+        applicationBuilder.Services.AddTransient<OperationTaskCreatedHandler>();
         applicationBuilder.Services.AddTransient<MachineOptions>();
         applicationBuilder.Services.AddTransient<GkgMachineOptions>();
         applicationBuilder.Services.AddTransient<SerialPortAsync>();

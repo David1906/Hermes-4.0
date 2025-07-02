@@ -13,4 +13,5 @@ public interface IMachine
 
     void Start();
     void Stop();
+    Task SendAcknowledgmentAsync(string serialNumber);
 }

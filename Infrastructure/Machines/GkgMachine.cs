@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Common.Extensions;
 using Common.ResultOf;
 using Common.Serial;
@@ -16,7 +17,7 @@ public class GkgMachine : IMachine, IDisposable
     public Subject<ResultOf<Logfile>> LogfileCreated { get; } = new();
     public BehaviorSubject<StateType> State { get; } = new(StateType.Stopped);
 
-    private readonly SerialPortRx _serialPortRx;
+    private readonly SerialPortRx _machineSerialPortRx;
     private readonly SerialScannerRx _serialScanner;
     private readonly IResilientFileSystem _fileSystem;
     private readonly GkgMachineOptions _gkgMachineOptions;
@@ -24,13 +25,13 @@ public class GkgMachine : IMachine, IDisposable
     private DisposableBag _disposables;
 
     public GkgMachine(
-        SerialPortRx serialPortRx,
+        SerialPortRx machineSerialPortRx,
         SerialScannerRx serialScanner,
         IResilientFileSystem fileSystem,
         GkgMachineOptions gkgMachineGkgMachineOptions,
         MachineOptions machineOptions)
     {
-        this._serialPortRx = serialPortRx;
+        this._machineSerialPortRx = machineSerialPortRx;
         this._serialScanner = serialScanner;
         this._fileSystem = fileSystem;
         this._gkgMachineOptions = gkgMachineGkgMachineOptions;
@@ -41,7 +42,7 @@ public class GkgMachine : IMachine, IDisposable
 
     private void SetupSerialPorts()
     {
-        this._serialPortRx.Options = _gkgMachineOptions.SerialPortOptions;
+        this._machineSerialPortRx.Options = _gkgMachineOptions.SerialPortOptions;
 
         this._serialScanner.Options = _gkgMachineOptions.ScannerOptions.SerialPortOptions;
         this._serialScanner.TriggerOnCommand = _gkgMachineOptions.ScannerOptions.TriggerOnCommand;
@@ -52,7 +53,7 @@ public class GkgMachine : IMachine, IDisposable
 
     private void SetupRx()
     {
-        this._serialPortRx.DataReceived
+        this._machineSerialPortRx.DataReceived
             .Where(x => x.Contains(_gkgMachineOptions.TriggerOnCommand))
             .ThrottleFirst(TimeSpan.FromSeconds(10))
             .SubscribeAwait(async (_, ct) => await this.OnTriggerReceivedAsync(ct))
@@ -92,34 +93,41 @@ public class GkgMachine : IMachine, IDisposable
         string logfileText,
         CancellationToken ct)
     {
-        var logfileFullpath = Path.Combine(
+        var destinationFullPath = Path.Combine(
             this._machineOptions.LogfileDirectory.FullName,
             $"{serialNumber.Trim()}_{DateTime.Now:hh_mm_ss}{this._machineOptions.LogFileExtension.GetDescription()}");
-        await this._fileSystem.WriteAllTextAsync(logfileFullpath, logfileText, ct);
+        await this._fileSystem.WriteAllTextAsync(destinationFullPath, logfileText, ct);
         return new Logfile
         {
             Content = logfileText,
-            FileInfo = new FileInfo(logfileFullpath)
+            FileInfo = new FileInfo(destinationFullPath)
         };
     }
 
     public void Start()
     {
-        this._serialPortRx.Open();
+        this._machineSerialPortRx.Open();
         this._serialScanner.Open();
         this.State.OnNext(StateType.Idle);
     }
 
     public void Stop()
     {
-        this._serialPortRx.Close();
+        this._machineSerialPortRx.Close();
         this._serialScanner.Close();
         this.State.OnNext(StateType.Stopped);
+    }
+
+    public async Task SendAcknowledgmentAsync(string serialNumber)
+    {
+        Debug.Assert(!string.IsNullOrEmpty(serialNumber));
+
+        await _machineSerialPortRx.WriteAsync(serialNumber);
     }
 
     public void Dispose()
     {
         this._disposables.Dispose();
-        this._serialPortRx.Dispose();
+        this._machineSerialPortRx.Dispose();
     }
 }

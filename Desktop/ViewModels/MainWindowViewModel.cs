@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using UseCases.Operations;
+using UseCases.OperationTasks;
 using UseCases.Users;
 
 namespace Desktop.ViewModels;
@@ -32,16 +33,19 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly UserUseCases _userUseCases;
     private readonly OperationsUseCases _operationsUseCases;
     private readonly IMachine _machine;
+    private readonly NotificationsHandler _notificationsHandler;
 
     public MainWindowViewModel(
         UserUseCases userUseCases,
         OperationsUseCases operationsUseCases,
         SqliteContext sqliteContext,
-        IMachine machine)
+        IMachine machine,
+        NotificationsHandler notificationsHandler)
     {
         this._userUseCases = userUseCases;
         this._operationsUseCases = operationsUseCases;
         this._machine = machine;
+        this._notificationsHandler = notificationsHandler;
         sqliteContext.Migrate();
         this.SetupRx();
     }
@@ -63,6 +67,22 @@ public partial class MainWindowViewModel : ViewModelBase
             .Do(x => this.MachineState.Value = x)
             .Subscribe(x => this.IsConnected.Value = x != StateType.Stopped)
             .AddTo(ref Disposables);
+
+        this._notificationsHandler.OperationCreated
+            .Subscribe(x => this.ShowToast($"Option Created: {x.MainSerialNumber}", NotificationType.Success))
+            .AddTo(ref Disposables);
+
+        this._notificationsHandler.OperationTaskCreated
+            .SubscribeAwait(async (x, ct) => await this.OnOperationTaskCreated(x, ct))
+            .AddTo(ref Disposables);
+    }
+
+    private async Task OnOperationTaskCreated(OperationTaskCreatedEvent @event, CancellationToken ct)
+    {
+        if (@event.OperationTask is { Type: OperationTaskType.AddLogfileToSfc, Result: OperationTaskResultType.Pass })
+        {
+            await _machine.SendAcknowledgmentAsync(@event.MainSerialNumber);
+        }
     }
 
     private async Task<ResultOf<Operation>> ProcessOperation(Logfile logfile, CancellationToken ct)
