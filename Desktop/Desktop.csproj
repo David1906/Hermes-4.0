@@ -41,4 +41,14 @@
         <HintPath>..\..\..\..\.dotnet\shared\Microsoft.AspNetCore.App\9.0.2\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
       </Reference>
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Features\Operations\OperationProcessorView.axaml.cs">
+        <DependentUpon>OperationProcessorView.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="Features\Main\MainWindow.axaml.cs">
+        <DependentUpon>MainWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

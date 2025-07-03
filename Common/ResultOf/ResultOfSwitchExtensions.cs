@@ -67,12 +67,12 @@ public static class ResultOfSwitchExtensions
     /// </summary>
     public static async Task<ResultOf<T>> OnFailure<T>(
         this Task<ResultOf<T>> result,
-        Func<T, Task> onFailure)
+        Func<ImmutableArray<Error>, Task> onFailure)
     {
         var r = await result;
         if (!r.IsSuccess)
         {
-            await onFailure(r.AsT0);
+            await onFailure(r.AsT1);
         }
 
         return r;

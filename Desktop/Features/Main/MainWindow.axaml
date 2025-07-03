@@ -1,12 +1,13 @@
 <suki:SukiWindow xmlns="https://github.com/avaloniaui"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:vm="using:Desktop.ViewModels"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:suki="https://github.com/kikipoulet/SukiUI"
+                 xmlns:operations="using:Desktop.Features.Operations"
+                 xmlns:main="clr-namespace:Desktop.Features.Main"
                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                 x:Class="Desktop.Views.MainWindow"
-                 x:DataType="vm:MainWindowViewModel"
+                 x:Class="Desktop.Features.Main.MainWindow"
+                 x:DataType="main:MainWindowViewModel"
                  Icon="/Assets/avalonia-logo.ico"
                  Title="Desktop">
 
@@ -33,20 +34,6 @@
                 Command="{Binding AddUserCommand}"
                 Content="Add User" />
 
-        <TextBlock Text="{Binding MachineState.Value, StringFormat=State: {0} }" />
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Margin=" 10"
-                    Classes="Success"
-                    Command="{Binding StartCommand}"
-                    Content="Start"
-                    IsVisible="{Binding !IsConnected.Value}" />
-
-            <Button Margin=" 10"
-                    Classes="Danger"
-                    Command="{Binding StopCommand}"
-                    Content="Stop"
-                    IsVisible="{Binding IsConnected.Value}" />
-        </StackPanel>
+        <operations:OperationProcessorView DataContext="{Binding OperationProcessorViewModel }" />
     </StackPanel>
 </suki:SukiWindow>

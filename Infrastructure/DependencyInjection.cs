@@ -1,11 +1,13 @@
 using Domain.Logfiles;
 using Domain.Machines;
+using Domain.Operations;
 using Domain.OperationTasks;
 using Domain.Scanners;
 using Infrastructure.Data.Logfiles;
 using Infrastructure.Data.OperationTasks;
 using Infrastructure.Data.Users;
 using Infrastructure.Data;
+using Infrastructure.Data.Operations;
 using Infrastructure.Gateways;
 using Infrastructure.Machines;
 using Infrastructure.Scanners;
@@ -18,6 +20,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services) => services
         .AddScoped<IUsersRepository, UsersRepository>()
         .AddScoped<IOperationTasksRepository, OperationTasksRepository>()
+        .AddScoped<IOperationsRepository, OperationsRepository>()
         .AddScoped<ILogfilesRepository, LogfilesRepository>()
         .AddScoped<ILogfilesSfcGateway, LogfilesSfcGateway>()
         .AddScoped<ISerialScannerRx, SerialScannerRx>()

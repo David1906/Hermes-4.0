@@ -1,0 +1,29 @@
+@startuml
+
+class OperationProcessorViewModel
+OperationProcessorViewModel *--> IViewModelFactory
+OperationProcessorViewModel *--> IAmACommandProcessor
+
+class IAmACommandProcessor
+IAmACommandProcessor .up.> OpenWindowHandler : Notify
+
+class IViewModelFactory
+IViewModelFactory ..> ViewModelBase
+
+class OpenWindowHandler{
+    +OpenWindow(ViewModelBase viewModel)
+}
+OpenWindowHandler ..> Window
+OpenWindowHandler ..> ViewModelBase
+OpenWindowHandler -down-> IAmACommandProcessor
+
+class Window 
+Window <|-- StopView
+
+class StopView
+StopView --> StopViewModel
+
+class ViewModelBase
+ViewModelBase <|-- StopViewModel 
+
+@enduml

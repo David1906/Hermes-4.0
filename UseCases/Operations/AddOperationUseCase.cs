@@ -8,7 +8,7 @@ using UseCases.OperationTasks;
 namespace UseCases.Operations;
 
 public class AddOperationUseCase(
-    SqliteContext sqliteContext,
+    IOperationsRepository operationsRepository,
     IAmACommandProcessor commandProcessor
 ) : IUseCase<AddOperationCommand, Operation>
 {
@@ -16,21 +16,18 @@ public class AddOperationUseCase(
     {
         try
         {
-            var dbModel = command.Operation.ToDbModel();
-            sqliteContext.Operations.Add(dbModel);
-            await sqliteContext.SaveChangesAsync(ct);
+            var result = await operationsRepository.AddAsync(command.Operation, ct);
 
             await commandProcessor.PublishAsync(new OperationCreatedEvent(
                 command.Operation.MainSerialNumber), cancellationToken: ct);
 
-            foreach (var operationTask in command.Operation.Tasks)
+            foreach (var operationTask in result.SuccessValue.Tasks)
             {
                 await commandProcessor.PublishAsync(new OperationTaskCreatedEvent(
                     command.Operation.MainSerialNumber, operationTask), cancellationToken: ct);
             }
 
-
-            return dbModel.ToDomainModel();
+            return result;
         }
         catch (Exception e)
         {

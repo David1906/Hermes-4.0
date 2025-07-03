@@ -3,7 +3,8 @@ using System;
 using System.IO;
 using Common;
 using Common.Serial;
-using Desktop.ViewModels;
+using Desktop.Features;
+using Desktop.Handlers;
 using Domain.Core.Types;
 using Domain.Logfiles;
 using Domain.Machines;
@@ -29,16 +30,17 @@ sealed class Program
     {
         var applicationBuilder = Host.CreateApplicationBuilder(args);
         applicationBuilder.Services
-            .AddViewModels()
+            .AddFeatures()
             .AddInfrastructure()
             .AddUseCases()
             .AddBrighter()
             .AutoFromAssemblies();
 
         // TODO
-        applicationBuilder.Services.AddSingleton<NotificationsHandler>();
+        applicationBuilder.Services.AddSingleton<EventsHandler>();
         applicationBuilder.Services.AddTransient<OperationCreatedHandler>();
         applicationBuilder.Services.AddTransient<OperationTaskCreatedHandler>();
+        applicationBuilder.Services.AddTransient<OpenWindowHandler>();
         applicationBuilder.Services.AddTransient<MachineOptions>();
         applicationBuilder.Services.AddTransient<GkgMachineOptions>();
         applicationBuilder.Services.AddTransient<SerialPortAsync>();

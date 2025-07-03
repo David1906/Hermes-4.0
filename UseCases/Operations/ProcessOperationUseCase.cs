@@ -17,7 +17,7 @@ public class ProcessOperationUseCase(
 
     public async Task<ResultOf<Operation>> ExecuteAsync(ProcessOperationCommand command, CancellationToken ct = default)
     {
-        var logfileResult = await this.MoveLogfileToBackup(command, ct);
+        var logfileResult = await this.ExecuteMoveLogfileToBackupUseCase(command, ct);
         if (logfileResult.IsFailure)
         {
             return ResultOf<Operation>.Failure(logfileResult.Errors);
@@ -31,7 +31,7 @@ public class ProcessOperationUseCase(
             return ResultOf<Operation>.Failure(operationResult.Errors);
         }
 
-        var addLogfileToSfcResult = await this.AddLogfileToSfc(logfileResult.SuccessValue, command, ct);
+        var addLogfileToSfcResult = await this.ExecuteAddLogfileToSfcUseCase(logfileResult.SuccessValue, command, ct);
         this.AddManufacturingOperationTask(operationResult.SuccessValue, logfileResult.SuccessValue);
         this.AddSfcOperationTask(operationResult.SuccessValue, addLogfileToSfcResult);
 
@@ -39,9 +39,11 @@ public class ProcessOperationUseCase(
             operationResult.SuccessValue), ct);
     }
 
-    private async Task<ResultOf<Logfile>> MoveLogfileToBackup(ProcessOperationCommand command, CancellationToken ct)
+    private Task<ResultOf<Logfile>> ExecuteMoveLogfileToBackupUseCase(
+        ProcessOperationCommand command,
+        CancellationToken ct)
     {
-        return await logfilesUseCases.MoveLogfileToBackup.ExecuteAsync(new MoveLogfileToBackupCommand(
+        return logfilesUseCases.MoveLogfileToBackup.ExecuteAsync(new MoveLogfileToBackupCommand(
             Logfile: command.InputLogfile,
             DestinationDirectory: command.BackupDirectory
         ), ct);
@@ -72,12 +74,12 @@ public class ProcessOperationUseCase(
         operation.Tasks.Add(operationTask);
     }
 
-    private async Task<ResultOf<Logfile>> AddLogfileToSfc(
+    private async Task<ResultOf<Logfile>> ExecuteAddLogfileToSfcUseCase(
         Logfile logfile,
         ProcessOperationCommand command,
         CancellationToken ct)
     {
-        var response = await logfilesUseCases.AddLogfileToSfcUseCase.ExecuteAsync(
+        return await logfilesUseCases.AddLogfileToSfcUseCase.ExecuteAsync(
             new AddLogfileToSfcCommand(
                 LogfileToUpload: logfile,
                 OkResponses: command.OkResponses,
@@ -85,7 +87,6 @@ public class ProcessOperationUseCase(
                 BackupDirectory: command.BackupDirectory,
                 MaxRetries: command.MaxRetries),
             ct);
-        return response;
     }
 
     private void AddSfcOperationTask(

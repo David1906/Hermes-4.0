@@ -1,9 +1,8 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Desktop.ViewModels;
 
-namespace Desktop;
+namespace Desktop.Core;
 
 public class ViewLocator : IDataTemplate
 {
@@ -17,7 +16,9 @@ public class ViewLocator : IDataTemplate
 
         if (type != null)
         {
-            return (Control)Activator.CreateInstance(type)!;
+            var control = (Control)Activator.CreateInstance(type)!;
+            control.DataContext = param;
+            return control;
         }
 
         return new TextBlock { Text = "Not Found: " + name };

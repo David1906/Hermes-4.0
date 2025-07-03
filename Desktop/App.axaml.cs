@@ -1,12 +1,11 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
-using Desktop.ViewModels;
-using Desktop.Views;
+using Desktop.Features.Main;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
+using MainWindowViewModel = Desktop.Features.Main.MainWindowViewModel;
 
 namespace Desktop;
 

@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using R3;
 
-namespace Desktop.ViewModels;
+namespace Desktop.Core;
 
 public class ViewModelBase : ObservableObject
 {

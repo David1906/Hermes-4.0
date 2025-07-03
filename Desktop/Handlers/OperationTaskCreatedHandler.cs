@@ -1,18 +1,18 @@
-using Paramore.Brighter;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
+using Paramore.Brighter;
 using UseCases.OperationTasks;
 
-namespace Desktop;
+namespace Desktop.Handlers;
 
-public class OperationTaskCreatedHandler(NotificationsHandler notificationsHandler)
+public class OperationTaskCreatedHandler(EventsHandler eventsHandler)
     : RequestHandlerAsync<OperationTaskCreatedEvent>
 {
     public override Task<OperationTaskCreatedEvent> HandleAsync(
         OperationTaskCreatedEvent @event,
         CancellationToken ct = default)
     {
-        notificationsHandler.OperationTaskCreated.OnNext(@event);
+        eventsHandler.OperationTaskCreated.OnNext(@event);
         return base.HandleAsync(@event, ct);
     }
 }

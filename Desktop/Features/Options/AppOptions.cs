@@ -2,7 +2,7 @@ using System.IO;
 using Domain.Core.Types;
 using Domain.Logfiles;
 
-namespace Desktop.Options;
+namespace Desktop.Features.Options;
 
 public class AppOptions
 {

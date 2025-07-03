@@ -4,6 +4,9 @@
     <option name="projectPerEditor">
       <map>
         <entry key="Desktop/App.axaml" value="Desktop/Desktop.csproj" />
+        <entry key="Desktop/Features/Locking/StopView.axaml" value="Desktop/Desktop.csproj" />
+        <entry key="Desktop/Features/Operations/OperationCreatorView.axaml" value="Desktop/Desktop.csproj" />
+        <entry key="Desktop/Features/Operations/OperationProcessorView.axaml" value="Desktop/Desktop.csproj" />
         <entry key="Desktop/Views/MainWindow.axaml" value="Desktop/Desktop.csproj" />
       </map>
     </option>
