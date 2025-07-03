@@ -60,11 +60,47 @@ namespace Common.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Elapsed time.
+        /// </summary>
+        public static string Elapsed_time {
+            get {
+                return ResourceManager.GetString("Elapsed time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         public static string txt_all {
             get {
                 return ResourceManager.GetString("txt_all", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        public static string txt_ok {
+            get {
+                return ResourceManager.GetString("txt_ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Repair.
+        /// </summary>
+        public static string txt_repair {
+            get {
+                return ResourceManager.GetString("txt_repair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Serial number.
+        /// </summary>
+        public static string txt_serial_number {
+            get {
+                return ResourceManager.GetString("txt_serial_number", resourceCulture);
             }
         }
     }

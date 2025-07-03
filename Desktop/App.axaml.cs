@@ -5,7 +5,8 @@ using Avalonia.Markup.Xaml;
 using Desktop.Features.Main;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using MainWindowViewModel = Desktop.Features.Main.MainWindowViewModel;
+using MainWindow = Desktop.Features.Main.Delivery.MainWindow;
+using MainWindowViewModel = Desktop.Features.Main.Delivery.MainWindowViewModel;
 
 namespace Desktop;
 

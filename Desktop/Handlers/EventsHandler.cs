@@ -1,7 +1,7 @@
-using Desktop.Events;
+using Desktop.Common.Events;
+using Desktop.Features.Operations.UseCases;
+using Desktop.Features.OperationTasks.UseCases;
 using R3;
-using UseCases.Operations;
-using UseCases.OperationTasks;
 
 namespace Desktop.Handlers;
 

@@ -1,0 +1,105 @@
+<suki:SukiWindow xmlns="https://github.com/avaloniaui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+                 xmlns:lang="clr-namespace:Common.Languages;assembly=Common"
+                 xmlns:local="clr-namespace:Desktop.Features.Stops.Delivery"
+                 mc:Ignorable="d"
+                 d:DesignWidth="900"
+                 d:DesignHeight="900"
+                 CanResize="False"
+                 Topmost="True"
+                 IsTitleBarVisible="True"
+                 WindowStartupLocation="CenterOwner"
+                 WindowState="FullScreen"
+                 ExtendClientAreaChromeHints="NoChrome"
+                 Background="{DynamicResource LightRedColor }"
+                 x:Class="Desktop.Features.Stops.Delivery.StopView"
+                 x:DataType="local:StopViewModel">
+
+    <suki:SukiWindow.Hosts>
+        <!-- <suki:SukiToastHost Manager="{Binding ToastManager}" /> -->
+    </suki:SukiWindow.Hosts>
+
+    <Grid Background="{DynamicResource LightRedColor }">
+
+        <Grid RowDefinitions="*, *, Auto"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Margin="0"
+              MinWidth="800">
+
+            <!-- Lock -->
+            <Border Grid.Row="0"
+                    CornerRadius="{StaticResource DefaultCornerRadius}"
+                    Background="{StaticResource DarkRedColor}"
+                    Padding="20">
+                <Grid RowDefinitions="*,Auto">
+
+                    <ScrollViewer Grid.Row="0">
+                        <TextBlock
+                            TextAlignment="Center"
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            Classes="h1"
+                            Foreground="White"
+                            Text="{Binding Title}" />
+                    </ScrollViewer>
+
+                    <WrapPanel Grid.Row="1"
+                               Orientation="Horizontal"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Bottom">
+
+                        <WrapPanel.Styles>
+                            <Style Selector="TextBlock">
+                                <Setter Property="FontSize" Value="16" />
+                                <Setter Property="Foreground" Value="WhiteSmoke" />
+                                <Setter Property="Margin" Value="15 5" />
+                            </Style>
+                        </WrapPanel.Styles>
+
+                        <TextBlock>
+                            <!-- <Run Text="{x:Static lang:Resources.txt_serial_number}" /> -->
+                            <Run Text="Serial number" />
+                            <Run Text=": " />
+                            <Run Text="{Binding SerialNumber}" />
+                        </TextBlock>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+
+            <!-- Authentication tokens-->
+            <Border Grid.Row="1"
+                    CornerRadius="{StaticResource DefaultCornerRadius}"
+                    Background="{StaticResource DarkRedColor}"
+                    Padding="20"
+                    Margin="0 10">
+
+                <StackPanel>
+                    <TextBlock
+                        FontWeight="Bold"
+                        Margin="5 0 0 0">
+                        <!-- <Run Text="{x:Static lang:Resources.txt_actions}" /> -->
+                        <Run Text=":" />
+                    </TextBlock>
+
+                    <TextBox
+                        Height="75"
+                        MaxLines="10"
+                        MaxLength="1024"
+                        Text="{Binding Actions}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Footer -->
+            <TextBlock Grid.Row="2">
+                <Run Text="{x:Static lang:Resources.Elapsed_time}" />
+                <Run Text=":" />
+                <Run Text="{Binding ElapsedTime}"></Run>
+            </TextBlock>
+        </Grid>
+    </Grid>
+</suki:SukiWindow>

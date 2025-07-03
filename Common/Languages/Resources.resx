@@ -21,4 +21,16 @@
     <data name="txt_all" xml:space="preserve">
         <value>All</value>
     </data>
+    <data name="txt_repair" xml:space="preserve">
+        <value>Repair</value>
+    </data>
+    <data name="txt_ok" xml:space="preserve">
+        <value>Ok</value>
+    </data>
+    <data name="txt_serial_number" xml:space="preserve">
+        <value>Serial number</value>
+    </data>
+    <data name="Elapsed time" xml:space="preserve">
+        <value>Elapsed time</value>
+    </data>
 </root>

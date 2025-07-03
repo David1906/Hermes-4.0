@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Desktop.Features.OperationTasks.UseCases;
 using Paramore.Brighter;
-using UseCases.OperationTasks;
 
 namespace Desktop.Handlers;
 

@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Desktop.Features.Users.Delivery"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Desktop.Features.Users.Delivery.UserView"
+             x:DataType="local:UserViewModel">
+
+    <StackPanel>
+        <Label Content="Name" />
+        <TextBox Text="{Binding Name, Mode=TwoWay }" />
+
+        <Label Content="Last name" />
+        <TextBox Text="{Binding LastName, Mode=TwoWay }" />
+
+        <Label Content="Email" />
+        <TextBox Text="{Binding Email, Mode=TwoWay }" />
+
+        <Button Command="{Binding AddUserCommand}">
+            Add user
+        </Button>
+    </StackPanel>
+
+</UserControl>

@@ -1,6 +1,6 @@
 using Avalonia.Controls;
+using Desktop.Common.Events;
 using Desktop.Core;
-using Desktop.Events;
 using Paramore.Brighter;
 
 namespace Desktop.Handlers;

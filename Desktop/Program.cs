@@ -1,26 +1,18 @@
 ﻿using Avalonia;
-using System;
-using System.IO;
-using Common;
-using Common.Serial;
+using Desktop.Common;
+using Desktop.Data;
 using Desktop.Features;
-using Desktop.Handlers;
-using Domain.Core.Types;
-using Domain.Logfiles;
-using Domain.Machines;
-using Domain.Operations;
-using Infrastructure;
-using Infrastructure.Scanners;
-using Microsoft.Extensions.DependencyInjection;
+using Desktop.Gateways;
 using Microsoft.Extensions.Hosting;
 using Paramore.Brighter.Extensions.DependencyInjection;
-using UseCases;
+using System;
+using Microsoft.Extensions.Configuration;
 
 namespace Desktop;
 
 sealed class Program
 {
-    public static IHost AppHost { get; set; } = null!;
+    public static IHost AppHost { get; private set; } = null!;
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -30,37 +22,18 @@ sealed class Program
     {
         var applicationBuilder = Host.CreateApplicationBuilder(args);
         applicationBuilder.Services
+            .AddCommon()
             .AddFeatures()
-            .AddInfrastructure()
-            .AddUseCases()
+            .AddData()
+            .AddGateways()
             .AddBrighter()
             .AutoFromAssemblies();
 
-        // TODO
-        applicationBuilder.Services.AddSingleton<EventsHandler>();
-        applicationBuilder.Services.AddTransient<OperationCreatedHandler>();
-        applicationBuilder.Services.AddTransient<OperationTaskCreatedHandler>();
-        applicationBuilder.Services.AddTransient<OpenWindowHandler>();
-        applicationBuilder.Services.AddTransient<MachineOptions>();
-        applicationBuilder.Services.AddTransient<GkgMachineOptions>();
-        applicationBuilder.Services.AddTransient<SerialPortAsync>();
-        applicationBuilder.Services.AddTransient<SerialPortRx>();
-        applicationBuilder.Services.AddTransient<SerialScannerRx>();
-        applicationBuilder.Services.AddTransient<TriOperationParser>();
-        applicationBuilder.Services.AddSingleton<IResilientFileSystem, ResilientFileSystem>();
-        applicationBuilder.Services.AddTransient<IFileSystemWatcherRx, FileSystemWatcherRx>();
-        applicationBuilder.Services.AddSingleton<LogfilesGatewayOptions>(_ =>
-        {
-            return new LogfilesGatewayOptions
-            {
-                BaseDirectory = new DirectoryInfo(@"C:\Users\david_ascencio\Documents\dev\Hermes\Sfc"),
-                ResponseExtensionType = FileExtensionType.Log
-            };
-        });
-        applicationBuilder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
+        applicationBuilder.Configuration
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("Assets/appsettings.json", optional: false, reloadOnChange: true);
 
         AppHost = applicationBuilder.Build();
-
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 

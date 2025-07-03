@@ -1,0 +1,26 @@
+<suki:SukiWindow xmlns="https://github.com/avaloniaui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+                 xmlns:operations="using:Desktop.Features.Operations"
+                 xmlns:main="clr-namespace:Desktop.Features.Main"
+                 xmlns:delivery="clr-namespace:Desktop.Features.Main.Delivery"
+                 xmlns:delivery1="clr-namespace:Desktop.Features.Operations.Delivery"
+                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                 x:Class="Desktop.Features.Main.Delivery.MainWindow"
+                 x:DataType="delivery:MainWindowViewModel"
+                 Icon="/Assets/avalonia-logo.ico"
+                 Title="Desktop">
+
+    <suki:SukiWindow.Hosts>
+        <suki:SukiToastHost Manager="{Binding ToastManager}" />
+    </suki:SukiWindow.Hosts>
+
+    <StackPanel Width="250"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+
+        <delivery1:OperationProcessorView DataContext="{Binding OperationProcessorViewModel }" />
+    </StackPanel>
+</suki:SukiWindow>
