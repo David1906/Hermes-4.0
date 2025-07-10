@@ -6,6 +6,8 @@ using Desktop.Gateways;
 using Microsoft.Extensions.Hosting;
 using Paramore.Brighter.Extensions.DependencyInjection;
 using System;
+using Core.Application;
+using Infrastructure;
 using Microsoft.Extensions.Configuration;
 
 namespace Desktop;
@@ -22,6 +24,8 @@ sealed class Program
     {
         var applicationBuilder = Host.CreateApplicationBuilder(args);
         applicationBuilder.Services
+            .AddApplication()
+            .AddInfrastructure()
             .AddCommon()
             .AddFeatures()
             .AddData()
@@ -31,7 +35,7 @@ sealed class Program
 
         applicationBuilder.Configuration
             .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("Assets/appsettings.json", optional: false, reloadOnChange: true);
+            .AddJsonFile("Assets/appsettings.json", optional: true, reloadOnChange: true);
 
         AppHost = applicationBuilder.Build();
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);

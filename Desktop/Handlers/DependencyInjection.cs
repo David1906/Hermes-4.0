@@ -9,5 +9,7 @@ public static class DependencyInjection
             .AddSingleton<EventsHandler>()
             .AddTransient<OperationCreatedHandler>()
             .AddTransient<OperationTaskCreatedHandler>()
+            .AddTransient<ShowSuccessHandler>()
+            .AddTransient<ShowStopHandler>()
             .AddTransient<OpenWindowHandler>();
 }

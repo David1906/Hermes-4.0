@@ -6,6 +6,8 @@ using Desktop.Core;
 using Desktop.Data;
 using Desktop.Features.Operations.Delivery;
 using Desktop.Handlers;
+using Infrastructure.Data;
+using Paramore.Brighter;
 using R3;
 using SukiUI.Toasts;
 
@@ -26,12 +28,14 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(
         EventsHandler eventsHandler,
         SqliteContext sqliteContext,
+        HermesContext hermesContext,
         OperationProcessorViewModel operationProcessorViewModel)
     {
         this._eventsHandler = eventsHandler;
         this.OperationProcessorViewModel = operationProcessorViewModel;
 
         sqliteContext.Migrate();
+        hermesContext.Migrate();
         this.SetupRx();
     }
 

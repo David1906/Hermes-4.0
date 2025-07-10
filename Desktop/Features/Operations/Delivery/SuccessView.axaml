@@ -14,7 +14,6 @@
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
         SystemDecorations="BorderOnly"
-        WindowStartupLocation="Manual"
         Topmost="True"
         Title="UutPassSuccessView"
         x:Name="Self"

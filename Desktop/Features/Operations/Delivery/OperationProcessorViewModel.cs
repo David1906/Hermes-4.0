@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using Common.Extensions;
 using Common.ResultOf;
 using CommunityToolkit.Mvvm.Input;
+using Core.Application.Features.Panels.Commands;
+using Core.Domain;
 using Desktop.Common;
 using Desktop.Core;
 using Desktop.Core.Types;
 using Desktop.Extensions;
-using Desktop.Features.Logfiles.Domain;
 using Desktop.Features.Machines.Domain;
 using Desktop.Features.Operations.Domain;
 using Desktop.Features.Operations.UseCases;
@@ -17,6 +18,8 @@ using Desktop.Features.OperationTasks.UseCases;
 using Desktop.Handlers;
 using Paramore.Brighter;
 using R3;
+using Logfile = Desktop.Features.Logfiles.Domain.Logfile;
+using LogfileType = Core.Domain.LogfileType;
 
 namespace Desktop.Features.Operations.Delivery;
 
@@ -77,20 +80,24 @@ public partial class OperationProcessorViewModel : ViewModelBase
             .AddTo(ref Disposables);
     }
 
-    private async Task<ResultOf<Operation>> ProcessOperation(Logfile logfile, CancellationToken ct)
+    private async Task<ResultOf<Panel>> ProcessOperation(Logfile logfile, CancellationToken ct)
     {
         Console.WriteLine($@"Start: {DateTime.Now:HH:mm:ss.fff}");
-        var response = await _operationsUseCases.ProcessOperationUseCase.ExecuteAsync(
-            new ProcessOperationCommand(
-                InputLogfile: logfile,
-                LogfileType.TriDefault,
-                BackupDirectory: new DirectoryInfo(BackupPath),
-                OkResponses: "OK",
-                Timeout: TimeSpan.FromSeconds(5),
-                MaxRetries: 0),
-            ct);
+        var cmd = new ProcessPanelFromLogfileCommand()
+        {
+            InputLogfile = new global::Core.Domain.Logfile()
+            {
+                FileInfo = logfile.FileInfo,
+                Type = LogfileType.TriDefault
+            },
+            BackupDirectory = new DirectoryInfo(BackupPath),
+            OkResponses = "OK",
+            Timeout = TimeSpan.FromSeconds(5),
+            MaxRetries = 0
+        };
+        await _commandProcessor.SendAsync(cmd, cancellationToken: ct);
         Console.WriteLine($@"End: {DateTime.Now:HH:mm:ss.fff}");
-        return response;
+        return cmd.Result;
     }
 
     private async Task OnOperationTaskCreated(OperationTaskCreatedEvent @event, CancellationToken ct)

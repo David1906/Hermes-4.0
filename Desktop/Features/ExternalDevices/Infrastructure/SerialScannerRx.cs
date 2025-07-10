@@ -72,7 +72,7 @@ public class SerialScannerRx : ISerialScannerRx
 
         ScannedText.OnNext(scannedText);
         this.State.Value = StateType.Idle;
-        return scannedText;
+        return scannedText.Trim();
     }
 
     public bool IsReadError(string serialNumber)

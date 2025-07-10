@@ -1,0 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+using Core.Domain;
+
+namespace Infrastructure.Data.Features.Defects;
+
+public class DefectDbModel
+{
+    public int Id { get; set; }
+    public ErrorFlagType ErrorFlag { get; set; } = ErrorFlagType.Good;
+    [MaxLength(255)] public string Location { get; set; } = "";
+    [MaxLength(255)] public string ErrorCode { get; set; } = "";
+}

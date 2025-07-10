@@ -1,10 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia;
+using System.Threading.Tasks;
+using System;
 
 namespace Desktop.Features.Operations.Delivery;
 
@@ -17,20 +16,18 @@ public partial class SuccessView : Window
 
     protected override void OnLoaded(RoutedEventArgs e)
     {
-        this.SetBottomCenterPosition();
-
         base.OnLoaded(e);
+        this.SetBottomCenterPosition();
     }
 
     protected override void OnDataContextChanged(EventArgs e)
     {
+        base.OnDataContextChanged(e);
         if (DataContext is SuccessViewModel vm)
         {
             Task.Delay(vm.CloseAfter).ContinueWith(_ => { this.Close(); },
                 TaskScheduler.FromCurrentSynchronizationContext());
         }
-
-        base.OnDataContextChanged(e);
     }
 
     private void SetBottomCenterPosition()

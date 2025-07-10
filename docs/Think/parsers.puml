@@ -1,0 +1,12 @@
+@startuml
+
+class LogfileParserFactory{
+    + Build(LogfileType)
+}
+
+
+LogfileParserFactory --> ILogfileParser
+
+interface ILogfileParser 
+
+@enduml

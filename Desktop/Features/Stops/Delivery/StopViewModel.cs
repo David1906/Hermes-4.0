@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Core.Application.Common.Types;
 using Desktop.Common;
 using Desktop.Core;
 using R3;
@@ -12,6 +14,7 @@ public partial class StopViewModel : ViewModelBase
     public string SerialNumber { get; set; } = "";
     public string Actions { get; set; } = "";
     public DateTime StartTime { get; set; } = DateTime.Now;
+    public List<DepartmentType> Departments { get; set; } = [];
 
     [ObservableProperty] private string _elapsedTime = "00:00:00";
 

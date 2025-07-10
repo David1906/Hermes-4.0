@@ -6,7 +6,7 @@ namespace Desktop.Features.Machines.Domain;
 public class MachineOptions
 {
     public StationType StationName { get; set; }
-    public string StationId { get; set; } = "";
+    public string StationId { get; set; } = "111";
     public string LineName { get; set; } = "";
     public MachineType MachineType { get; set; } = MachineType.Aoi;
     public MachineBrand MachineBrand { get; set; } = MachineBrand.Tri;

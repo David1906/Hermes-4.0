@@ -1,0 +1,26 @@
+@startuml Use cases
+left to right direction
+
+usecase (MoveLogfileToBackup)
+usecase (CreatePanelFromLogfile)
+usecase (SendPanelToNextStation)
+usecase (ShowStop)
+usecase (ShowSuccess)
+usecase (CalculateThreeFiveTenStop)
+usecase (CalculateCriticalComponentStop) 
+
+:Machine: --> (ProcessPanelFromLogfile)
+(ProcessPanelFromLogfile) ..> (MoveLogfileToBackup) : "<include>"
+(ProcessPanelFromLogfile) ..> (CreatePanelFromLogfile) : "<include>"
+(ProcessPanelFromLogfile) ..> (SendPanelToNextStation) : "<include>"
+
+(SendPanelToNextStation) ..> (ShowSuccess) : "<include>"
+(SendPanelToNextStation) ..> (ShowStop) : "<include>"
+
+:Machine: --> (CalculateThreeFiveTenStop)
+(CalculateThreeFiveTenStop) ..> (ShowStop) : "<include>"
+
+:Machine: --> (CalculateCriticalComponentStop)
+(CalculateCriticalComponentStop) ..> (ShowStop) : "<include>"
+
+@enduml

@@ -13,6 +13,8 @@ public class Error
     public static readonly Error ConnectionError = new Error(1008, "Connection error");
     public static readonly Error UploadSerialNumbersError = new Error(1009, "Upload serial numbers error");
     public static readonly Error ScanningError = new Error(1010, "Scanning error");
+    public static readonly Error NotFound = new Error(1011, "Not found");
+    public static readonly Error InvalidData = new Error(1012, "Invalid data");
 
     public int Id { get; }
     public string Message { get; }
