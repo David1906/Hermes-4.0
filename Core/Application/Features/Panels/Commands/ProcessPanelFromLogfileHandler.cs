@@ -1,4 +1,3 @@
-using Common.Extensions;
 using Common.ResultOf;
 using Core.Application.Common.Data;
 using Core.Application.Common.Extensions;
@@ -21,19 +20,19 @@ public class ProcessPanelFromLogfileHandler(
             command.InputLogfile, command.BackupDirectory, cancellationToken);
         if (logfileResult.IsFailure)
         {
-            command.Result = ResultOf<Panel>.Failure(logfileResult.Errors);
+            command.Result = ResultOf<Panel>.Failure(logfileResult.Error);
             return command;
         }
 
         var panelResult = await this.CreatePanelFromMachineLogfileAsync(command, cancellationToken);
         if (panelResult.IsFailure)
         {
-            commandProcessor.ShowErrorToast(panelResult.Errors.JoinWithNewLine());
+            commandProcessor.ShowErrorToast(panelResult.Error.Message);
             command.Result = panelResult;
             return command;
         }
 
-        command.Result = await this.SendPanelToNextStation(panelResult.SuccessValue, command, cancellationToken);
+        command.Result = await this.SendPanelToNextStation(panelResult.Value, command, cancellationToken);
 
         await uow.SaveChangesAsync(cancellationToken);
         return await base.HandleAsync(command, cancellationToken);
@@ -80,6 +79,6 @@ public class ProcessPanelFromLogfileHandler(
             MaxRetries = command.MaxRetries
         };
         await commandProcessor.SendAsync(nextStationCommand, cancellationToken: ct);
-        return nextStationCommand.Result;
+        return panel;
     }
 }

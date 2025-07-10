@@ -1,5 +1,6 @@
 using Common.ResultOf;
 using Common;
+using Core.Application.Common.Errors;
 using Core.Application.Common.FileParsers;
 using Core.Domain;
 using System.Text.RegularExpressions;
@@ -20,7 +21,7 @@ public class PanelParser(IResilientFileSystem fileSystem) : IPanelParser
         var boards = ParseBoards(content);
         if (boards.Count == 0)
         {
-            return ResultOf<Panel>.Failure(Error.InvalidData);
+            return ResultOf<Panel>.Failure(new InvalidDataError());
         }
 
         return new Panel(boards)

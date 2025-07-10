@@ -70,6 +70,27 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Defects", (string)null);
                 });
 
+            modelBuilder.Entity("Infrastructure.Data.Features.Errors.ErrorDbModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ErrorType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ErrorDbModel");
+                });
+
             modelBuilder.Entity("Infrastructure.Data.Features.Logfiles.LogfileDbModel", b =>
                 {
                     b.Property<int>("Id")
@@ -98,13 +119,13 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ErrorId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("LogfileId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("PanelDbModelId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Result")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("StartTime")
@@ -114,6 +135,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ErrorId");
 
                     b.HasIndex("LogfileId");
 
@@ -154,6 +177,12 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Infrastructure.Data.Features.Operations.OperationDbModel", b =>
                 {
+                    b.HasOne("Infrastructure.Data.Features.Errors.ErrorDbModel", "Error")
+                        .WithMany()
+                        .HasForeignKey("ErrorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Infrastructure.Data.Features.Logfiles.LogfileDbModel", "Logfile")
                         .WithMany()
                         .HasForeignKey("LogfileId");
@@ -161,6 +190,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("Infrastructure.Data.Features.Panels.PanelDbModel", null)
                         .WithMany("Operations")
                         .HasForeignKey("PanelDbModelId");
+
+                    b.Navigation("Error");
 
                     b.Navigation("Logfile");
                 });

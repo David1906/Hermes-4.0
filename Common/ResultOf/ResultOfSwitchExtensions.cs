@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Common.ResultOf;
 
 public static class ResultOfSwitchExtensions
@@ -10,7 +8,7 @@ public static class ResultOfSwitchExtensions
     public static async Task<ResultOf<T>> Switch<T>(
         this Task<ResultOf<T>> result,
         Action<T> onSuccess,
-        Action<ImmutableArray<Error>> onFailure)
+        Action<Error> onFailure)
     {
         var r = await result;
         r.Switch(
@@ -67,7 +65,7 @@ public static class ResultOfSwitchExtensions
     /// </summary>
     public static async Task<ResultOf<T>> OnFailure<T>(
         this Task<ResultOf<T>> result,
-        Func<ImmutableArray<Error>, Task> onFailure)
+        Func<Error, Task> onFailure)
     {
         var r = await result;
         if (!r.IsSuccess)
@@ -83,7 +81,7 @@ public static class ResultOfSwitchExtensions
     /// </summary>
     public static ResultOf<T> OnFailure<T>(
         this ResultOf<T> result,
-        Action<ImmutableArray<Error>> onFailure)
+        Action<Error> onFailure)
     {
         if (!result.IsSuccess)
         {
@@ -98,7 +96,7 @@ public static class ResultOfSwitchExtensions
     /// </summary>
     public static async Task<ResultOf<T>> OnFailure<T>(
         this Task<ResultOf<T>> result,
-        Action<ImmutableArray<Error>> onFailure)
+        Action<Error> onFailure)
     {
         var r = await result;
         return r.OnFailure(onFailure);

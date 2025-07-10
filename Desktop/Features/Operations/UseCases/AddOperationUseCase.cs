@@ -23,7 +23,7 @@ public class AddOperationUseCase(
             await commandProcessor.PublishAsync(new OperationCreatedEvent(
                 command.Operation.MainSerialNumber), cancellationToken: ct);
 
-            foreach (var operationTask in result.SuccessValue.Tasks)
+            foreach (var operationTask in result.Value.Tasks)
             {
                 await commandProcessor.PublishAsync(new OperationTaskCreatedEvent(
                     command.Operation.MainSerialNumber, operationTask), cancellationToken: ct);

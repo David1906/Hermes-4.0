@@ -18,7 +18,7 @@ public static class ResultOfBindExtensions
         {
             return resultOf.IsSuccess
                 ? method(resultOf.AsT0)
-                : ResultOf<T1>.Failure(resultOf.Errors);
+                : ResultOf<T1>.Failure(resultOf.Error);
         }
         catch (Exception e)
         {
@@ -45,7 +45,7 @@ public static class ResultOfBindExtensions
         {
             return resultOf.IsSuccess
                 ? await method(resultOf.AsT0, ct)
-                : ResultOf<T1>.Failure(resultOf.Errors);
+                : ResultOf<T1>.Failure(resultOf.Error);
         }
         catch (Exception e)
         {

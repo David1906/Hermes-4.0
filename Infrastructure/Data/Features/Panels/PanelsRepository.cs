@@ -1,5 +1,6 @@
 using Common.ResultOf;
 using Core.Application.Common.Data;
+using Core.Application.Common.Errors;
 using Core.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,6 @@ public class PanelsRepository(HermesContext hermesContext) : IPanelsRepository
             .Include(x => x.Operations)
             .Select(x => x.ToDomainModel())
             .FirstOrDefaultAsync();
-        return panel ?? ResultOf<Panel>.Failure(Error.NotFound);
+        return panel ?? ResultOf<Panel>.Failure(new NotFoundError());
     }
 }

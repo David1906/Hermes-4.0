@@ -60,7 +60,7 @@ public partial class OperationProcessorViewModel : ViewModelBase
                     .Bind(this.ProcessOperation, ct)
                     .OnFailure(x =>
                     {
-                        this._commandProcessor.ShowErrorToast(x.JoinWithNewLine());
+                        this._commandProcessor.ShowErrorToast(x.Message);
                         return Task.CompletedTask;
                     });
             })

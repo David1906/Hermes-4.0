@@ -12,6 +12,20 @@ namespace Infrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ErrorDbModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Message = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    ErrorType = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ErrorDbModel", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Logfiles",
                 columns: table => new
                 {
@@ -65,7 +79,7 @@ namespace Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
-                    Result = table.Column<int>(type: "INTEGER", nullable: false),
+                    ErrorId = table.Column<int>(type: "INTEGER", nullable: false),
                     LogfileId = table.Column<int>(type: "INTEGER", nullable: true),
                     StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EndTime = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -74,6 +88,12 @@ namespace Infrastructure.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OperationDbModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OperationDbModel_ErrorDbModel_ErrorId",
+                        column: x => x.ErrorId,
+                        principalTable: "ErrorDbModel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OperationDbModel_Logfiles_LogfileId",
                         column: x => x.LogfileId,
@@ -118,6 +138,11 @@ namespace Infrastructure.Data.Migrations
                 column: "BoardDbModelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OperationDbModel_ErrorId",
+                table: "OperationDbModel",
+                column: "ErrorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OperationDbModel_LogfileId",
                 table: "OperationDbModel",
                 column: "LogfileId");
@@ -139,6 +164,9 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Boards");
+
+            migrationBuilder.DropTable(
+                name: "ErrorDbModel");
 
             migrationBuilder.DropTable(
                 name: "Logfiles");

@@ -12,5 +12,6 @@ public enum OperationResultType
     Skipped,
     WrongStation,
     EndOfFile,
-    TimedOut
+    TimedOut,
+    ConnectionError
 }

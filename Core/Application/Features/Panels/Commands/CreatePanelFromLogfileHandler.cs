@@ -24,7 +24,7 @@ public class CreatePanelFromLogfileHandler(
         if (panelResult.IsSuccess)
         {
             await operationParser.ParseMachineOperationAsync(command.Logfile)
-                .OnSuccess(operation => panelResult.SuccessValue.Operations.Add(operation));
+                .OnSuccess(operation => panelResult.Value.Operations.Add(operation));
         }
 
         command.Result = panelResult;

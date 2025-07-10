@@ -11,5 +11,5 @@ public class ProcessPanelFromLogfileCommand() : Command(Guid.NewGuid())
     public required string OkResponses { get; init; }
     public required TimeSpan Timeout { get; init; }
     public int MaxRetries { get; init; }
-    public ResultOf<Panel> Result { get; set; } = ResultOf<Panel>.Failure(Error.Unknown);
+    public ResultOf<Panel> Result { get; set; } = ResultOf<Panel>.Failure(new UnknownError());
 };

@@ -1,8 +1,7 @@
 using Common.ResultOf;
-using Common;
 using Core.Application.Common.Data;
+using Core.Application.Common.Errors;
 using Core.Application.Common.Events;
-using Core.Application.Common.FileParsers;
 using Core.Application.Common.Gateways;
 using Core.Application.Common.Types;
 using Core.Application.Features.Logfiles.Commands;
@@ -14,47 +13,57 @@ namespace Core.Application.Features.Panels.Commands;
 public class SendPanelToNextStationHandler(
     IUnitOfWork uow,
     IAmACommandProcessor commandProcessor,
-    IResilientFileSystem fileSystem,
-    ILogfilesSfcGateway logfilesSfcGateway,
-    IOperationParser operationParser
+    ILogfilesSfcGateway logfilesSfcGateway
 ) : RequestHandlerAsync<SendPanelToNextStationCommand>
 {
     public override async Task<SendPanelToNextStationCommand> HandleAsync(
         SendPanelToNextStationCommand command,
         CancellationToken cancellationToken = default)
     {
+        var operation = command.ResultOperation;
+        command.Panel.Operations.Add(operation);
+        operation.Start();
+
         if (!this.EnsureSfcPathCommunication())
         {
-            // TODO: Show stop based on failure for EE/IT
-            command.Result = ResultOf<Panel>.Failure(Error.ConnectionError);
-            return command;
+            operation.End(new ConnectionError());
+            await SendShowStopEventAsync(command, cancellationToken, operation);
+            return await base.HandleAsync(command, cancellationToken);
         }
 
-        var operation = await this.SendPanelToNextStation(command, cancellationToken);
+        await this.SendPanelToNextStation(operation, command, cancellationToken);
+        // TODO: Convertir contenido de respuesta en error
         if (operation.IsFailure)
         {
-            await commandProcessor.SendAsync(new ShowStopEvent()
-            {
-                Title = operation.Logfile is not null
-                    ? await fileSystem.ReadAllTextAsync(operation.Logfile.FullName, cancellationToken)
-                    : operation.Result.ToString(),
-                SerialNumber = command.Panel.MainSerialNumber,
-                Departments = [DepartmentType.EE]
-            }, cancellationToken: cancellationToken);
-            command.Result = ResultOf<Panel>.Failure(Error.ConnectionError);
-            return command;
+            await SendShowStopEventAsync(command, cancellationToken, operation);
+            return await base.HandleAsync(command, cancellationToken);
         }
 
+        await uow.SaveChangesAsync(cancellationToken);
+        await SendSuccessEventAsync(command, cancellationToken);
+        return await base.HandleAsync(command, cancellationToken);
+    }
+
+    private async Task SendSuccessEventAsync(SendPanelToNextStationCommand command, CancellationToken cancellationToken)
+    {
         await commandProcessor.SendAsync(new ShowSuccessEvent()
         {
             Title = "OK",
             SerialNumber = command.Panel.MainSerialNumber,
             IsRepair = command.Panel.ContainsFailedBoard
         }, cancellationToken: cancellationToken);
+    }
 
-        await uow.SaveChangesAsync(cancellationToken);
-        command.Result = command.Panel;
-        return await base.HandleAsync(command, cancellationToken);
+    private async Task SendShowStopEventAsync(SendPanelToNextStationCommand command,
+        CancellationToken cancellationToken,
+        Operation operation)
+    {
+        await commandProcessor.SendAsync(new ShowStopEvent()
+        {
+            Title = operation.Title,
+            SerialNumber = command.Panel.MainSerialNumber,
+            Departments = [DepartmentType.EE]
+        }, cancellationToken: cancellationToken);
     }
 
     private bool EnsureSfcPathCommunication()
@@ -63,21 +72,18 @@ public class SendPanelToNextStationHandler(
         return true;
     }
 
-    private async Task<Operation> SendPanelToNextStation(
+    private async Task SendPanelToNextStation(
+        Operation operation,
         SendPanelToNextStationCommand command,
         CancellationToken ct)
     {
-        var sendResult = await logfilesSfcGateway.SendPanelToNextStationAsync(
+        await logfilesSfcGateway.SendPanelToNextStationAsync(
                 command.InputLogfile,
                 command.MaxRetries,
                 command.Timeout,
                 ct)
-            .Bind((x, _) => MoveLogfileToBackupAsync(x, command.BackupDirectory, ct), ct: ct);
-
-        return await operationParser.ParseSfcResponseAsync(
-            sendResult.IsSuccess ? sendResult.SuccessValue : null,
-            sendResult.Errors,
-            command.OkResponses);
+            .Bind((x, _) => MoveLogfileToBackupAsync(x, command.BackupDirectory, ct), ct: ct)
+            .OnFailure(operation.End);
     }
 
     private async Task<ResultOf<Logfile>> MoveLogfileToBackupAsync(

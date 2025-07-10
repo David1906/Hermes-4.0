@@ -43,8 +43,8 @@ public class AddOperationTaskUseCaseTests
         Assert.Multiple(() =>
         {
             Assert.That(result.IsSuccess);
-            Assert.That(result.SuccessValue.Type, Is.EqualTo(expectedTask.Type));
-            Assert.That(result.SuccessValue.Result, Is.EqualTo(expectedTask.Result));
+            Assert.That(result.Value.Type, Is.EqualTo(expectedTask.Type));
+            Assert.That(result.Value.Result, Is.EqualTo(expectedTask.Result));
             _repoTasksMock.Verify(r => r.AddAsync(It.IsAny<int>(), It.IsAny<OperationTask>()), Times.Once);
         });
     }
@@ -67,7 +67,7 @@ public class AddOperationTaskUseCaseTests
         Assert.Multiple(() =>
         {
             Assert.That(result.IsSuccess, Is.False);
-            Assert.That(result.Errors, Is.Not.Null);
+            Assert.That(result.Error, Is.Not.Null);
         });
     }
 }

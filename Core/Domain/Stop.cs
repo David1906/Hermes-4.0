@@ -1,4 +1,5 @@
 using Common.ResultOf;
+using Core.Domain.Common.Errors;
 
 namespace Core.Domain;
 

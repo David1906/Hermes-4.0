@@ -2,6 +2,8 @@ using Common.ResultOf;
 using Common;
 using Core.Domain;
 using System.Text.RegularExpressions;
+using Core.Application.Common.Errors;
+using UnknownError = Core.Domain.Common.Errors.UnknownError;
 
 namespace Infrastructure.FileParsers;
 
@@ -19,7 +21,7 @@ public class SfcResponseOperationParser(IResilientFileSystem fileSystem)
         {
             Type = OperationType.SendPanelToNextStation,
             Logfile = logfile,
-            Result = ExtractResult(content, okResponses),
+            Error = ExtractResult(content, okResponses),
         };
     }
 
@@ -28,34 +30,34 @@ public class SfcResponseOperationParser(IResilientFileSystem fileSystem)
         return new Operation()
         {
             Type = OperationType.SendPanelToNextStation,
-            Result = ExtractResult(errors)
+            Error = errors.First()
         };
     }
 
-    private OperationResultType ExtractResult(string content, string okResponses)
+    private Error? ExtractResult(string content, string okResponses)
     {
         if (string.IsNullOrEmpty(content))
         {
-            return OperationResultType.Unknown;
+            return new UnknownError();
         }
 
         if (RegexIsOk.Match(content).Success ||
             this.ContainsAdditionalOkSfcResponse(content, okResponses))
         {
-            return OperationResultType.Pass;
+            return null;
         }
 
         if (RegexWrongStation.Match(content).Success)
         {
-            return OperationResultType.WrongStation;
+            return new WrongStationError(content);
         }
 
         if (RegexIsEndOfFileError.Match(content).Success)
         {
-            return OperationResultType.EndOfFile;
+            return new EndOfFileError(content);
         }
 
-        return OperationResultType.Fail;
+        return new UnknownError();
     }
 
     private bool ContainsAdditionalOkSfcResponse(string content, string okResponses)
@@ -74,15 +76,5 @@ public class SfcResponseOperationParser(IResilientFileSystem fileSystem)
         }
 
         return false;
-    }
-
-    private OperationResultType ExtractResult(IEnumerable<Error> errors)
-    {
-        if (errors.Any(x => x == Error.Timeout))
-        {
-            return OperationResultType.TimedOut;
-        }
-
-        return OperationResultType.Unknown;
     }
 }

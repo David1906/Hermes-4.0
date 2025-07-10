@@ -12,6 +12,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using Core.Application.Common.Errors;
 
 namespace Desktop.Features.Machines.Infrastructure;
 
@@ -76,7 +77,7 @@ public class GkgMachine : IMachine, IDisposable
         if (this._serialScanner.IsReadError(serialNumber))
         {
             this.LogfileCreated.OnNext(
-                ResultOf<Logfile>.Failure(Error.ScanningError));
+                ResultOf<Logfile>.Failure(new ScanningError()));
         }
         else
         {

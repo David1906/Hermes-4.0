@@ -2,6 +2,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.ResultOf;
+using Core.Application.Common.Errors;
 using Desktop.Core.Interfaces;
 using Desktop.Features.Logfiles.Domain;
 
@@ -18,7 +19,7 @@ public class AddLogfileToSfcUseCase(
     {
         if (!this.EnsureSfcPathCommunication())
         {
-            return ResultOf<Logfile>.Failure(Error.ConnectionError);
+            return ResultOf<Logfile>.Failure(new ConnectionError());
         }
 
         return await logfilesSfcGateway.UploadOperationAsync(

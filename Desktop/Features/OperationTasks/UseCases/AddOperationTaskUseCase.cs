@@ -25,10 +25,10 @@ public class AddOperationTaskUseCase(
                 var logfileResult = await logfilesRepository.GetByIdAsync(command.LogfileId, ct);
                 if (logfileResult.IsFailure)
                 {
-                    return ResultOf<OperationTask>.Failure(logfileResult.Errors);
+                    return ResultOf<OperationTask>.Failure(logfileResult.Error);
                 }
 
-                logfile = logfileResult.SuccessValue;
+                logfile = logfileResult.Value;
             }
 
             return await operationTasksRepository.AddAsync(

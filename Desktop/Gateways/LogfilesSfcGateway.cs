@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using Core.Application.Common.Errors;
 
 namespace Desktop.Gateways;
 
@@ -28,7 +29,7 @@ public class LogfilesSfcGateway(
         {
             if (ct.IsCancellationRequested)
             {
-                return ResultOf<Logfile>.Failure(Error.OperationCancelled);
+                return ResultOf<Logfile>.Failure(new OperationCancelledError());
             }
 
             if (retries > 0)
@@ -69,11 +70,11 @@ public class LogfilesSfcGateway(
         }
         catch (TimeoutException)
         {
-            result = ResultOf<Logfile>.Failure(Error.Timeout);
+            result = ResultOf<Logfile>.Failure(new TimeoutError());
         }
         catch (OperationCanceledException)
         {
-            result = ResultOf<Logfile>.Failure(Error.OperationCancelled);
+            result = ResultOf<Logfile>.Failure(new OperationCancelledError());
         }
         catch (Exception e)
         {

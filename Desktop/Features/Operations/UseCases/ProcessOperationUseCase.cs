@@ -24,23 +24,23 @@ public class ProcessOperationUseCase(
         var logfileResult = await this.ExecuteMoveLogfileToBackupUseCase(command, ct);
         if (logfileResult.IsFailure)
         {
-            return ResultOf<Operation>.Failure(logfileResult.Errors);
+            return ResultOf<Operation>.Failure(logfileResult.Error);
         }
 
-        logfileResult.SuccessValue.Type = command.LogfileType;
+        logfileResult.Value.Type = command.LogfileType;
 
-        var operationResult = this.ParseOperation(logfileResult.SuccessValue);
+        var operationResult = this.ParseOperation(logfileResult.Value);
         if (operationResult.IsFailure)
         {
-            return ResultOf<Operation>.Failure(operationResult.Errors);
+            return ResultOf<Operation>.Failure(operationResult.Error);
         }
 
-        var addLogfileToSfcResult = await this.ExecuteAddLogfileToSfcUseCase(logfileResult.SuccessValue, command, ct);
-        this.AddManufacturingOperationTask(operationResult.SuccessValue, logfileResult.SuccessValue);
-        this.AddSfcOperationTask(operationResult.SuccessValue, addLogfileToSfcResult);
+        var addLogfileToSfcResult = await this.ExecuteAddLogfileToSfcUseCase(logfileResult.Value, command, ct);
+        this.AddManufacturingOperationTask(operationResult.Value, logfileResult.Value);
+        this.AddSfcOperationTask(operationResult.Value, addLogfileToSfcResult);
 
         return await addOperationUseCase.ExecuteAsync(new AddOperationCommand(
-            operationResult.SuccessValue), ct);
+            operationResult.Value), ct);
     }
 
     private Task<ResultOf<Logfile>> ExecuteMoveLogfileToBackupUseCase(
@@ -99,13 +99,13 @@ public class ProcessOperationUseCase(
         string okResponses = "OK")
     {
         var sfcResponseLogfile = result.IsSuccess
-            ? result.SuccessValue
+            ? result.Value
             : null;
 
         var operationTask = _operationTaskParserFactory
             .CreateSfcResponseOperationTaskParser(sfcResponseLogfile?.Type ?? LogfileType.SfcDefault)
             .SetOkResponses(okResponses)
-            .SetErrors(result.Errors)
+            .SetErrors([result.Error])
             .Parse(sfcResponseLogfile);
 
         operation.Tasks.Add(operationTask);

@@ -4,19 +4,13 @@ using OneOf;
 
 namespace Common.ResultOf;
 
-public class ResultOf<T> : OneOfBase<T, ImmutableArray<Error>>
+public class ResultOf<T> : OneOfBase<T, Error>
 {
     public bool IsSuccess => this.IsT0;
     public bool IsFailure => !this.IsSuccess;
+    public Error Error => this.AsT1;
 
-    public IEnumerable<Error> Errors => this.IsT1
-        ? this.AsT1
-        : ImmutableArray<Error>.Empty;
-
-    public T SuccessValue => this.IsT0
-        ? this.AsT0
-        : throw new InvalidOperationException("Cannot access SuccessValue when the result is a failure.");
-
+    public new T Value => this.AsT0;
 
     /// <summary>
     /// Implicitly converts a value of type T to a successful result with an HTTP status code of OK.
@@ -24,23 +18,18 @@ public class ResultOf<T> : OneOfBase<T, ImmutableArray<Error>>
     /// <param name="value">The value to convert.</param>
     public static implicit operator ResultOf<T>(T value) => new(value);
 
-    public ResultOf(OneOf<T, ImmutableArray<Error>> input) : base(input)
+    public ResultOf(OneOf<T, Error> error) : base(error)
     {
     }
 
     public static ResultOf<T> Failure(string error)
     {
-        return Failure(new Error(error));
+        return Failure(new UnknownError(error));
     }
 
     public static ResultOf<T> Failure(Error error)
     {
-        return new ResultOf<T>(ImmutableArray.Create(error));
-    }
-
-    public static ResultOf<T> Failure(IEnumerable<Error> errors)
-    {
-        return new ResultOf<T>(ImmutableArray.CreateRange(errors));
+        return new ResultOf<T>(error);
     }
 
     public static ResultOf<T> Success(T value)

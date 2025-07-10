@@ -1,10 +1,11 @@
 using Common.Extensions;
 using Common.ResultOf;
 using Common;
-using Core.Application.Common.FileParsers;
+using Core.Application.Common.Errors;
 using Core.Application.Common.Gateways;
 using Core.Domain;
 using R3;
+using UnknownError = Core.Domain.Common.Errors.UnknownError;
 
 namespace Infrastructure.Gateways;
 
@@ -26,7 +27,7 @@ public class LogfilesSfcGateway(
         {
             if (ct.IsCancellationRequested)
             {
-                return ResultOf<Logfile>.Failure(Error.OperationCancelled);
+                return ResultOf<Logfile>.Failure(new OperationCancelledError());
             }
 
             if (retries > 0)
@@ -68,15 +69,15 @@ public class LogfilesSfcGateway(
         }
         catch (TimeoutException)
         {
-            result = ResultOf<Logfile>.Failure(Error.Timeout);
+            result = ResultOf<Logfile>.Failure(new TimeoutError());
         }
         catch (OperationCanceledException)
         {
-            result = ResultOf<Logfile>.Failure(Error.OperationCancelled);
+            result = ResultOf<Logfile>.Failure(new OperationCancelledError());
         }
         catch (Exception e)
         {
-            result = ResultOf<Logfile>.Failure(e.Message);
+            result = ResultOf<Logfile>.Failure(new UnknownError(e.Message));
         }
         finally
         {

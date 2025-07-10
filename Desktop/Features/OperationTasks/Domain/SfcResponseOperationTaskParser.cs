@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System;
+using Core.Application.Common.Errors;
 
 namespace Desktop.Features.OperationTasks.Domain;
 
@@ -78,7 +79,7 @@ public class SfcResponseOperationTaskParser : ILogfileParser<OperationTask>
 
     private OperationTaskResultType ExtractResultFromErrors()
     {
-        if (_errors.Any(x => x == Error.Timeout))
+        if (_errors.Any(x => x is TimeoutError))
         {
             return OperationTaskResultType.TimedOut;
         }
