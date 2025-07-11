@@ -10,7 +10,7 @@ public class LogfilesRepository(HermesContext hermesContext) : ILogfilesReposito
     {
         try
         {
-            var dbModel = logfile.ToDbModel();
+            var dbModel = logfile.ToDto();
             hermesContext.Logfiles.Add(dbModel);
             await hermesContext.SaveChangesAsync(ct);
             var newLogfile = dbModel.ToDomainModel();

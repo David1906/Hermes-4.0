@@ -7,8 +7,8 @@ namespace Infrastructure.Data.Features.Boards;
 public static partial class BoardMappers
 {
     [MapperIgnoreSource(nameof(Board.IsPass))]
-    public static partial BoardDbModel ToDbModel(this Board board);
+    public static partial BoardDto ToDto(this Board board);
 
     [MapperIgnoreTarget(nameof(Board.IsPass))]
-    public static partial Board ToDomainModel(this BoardDbModel boardDbModel);
+    public static partial Board ToDomainModel(this BoardDto boardDto);
 }

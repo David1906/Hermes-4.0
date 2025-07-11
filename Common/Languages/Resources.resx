@@ -30,7 +30,34 @@
     <data name="txt_serial_number" xml:space="preserve">
         <value>Serial number</value>
     </data>
-    <data name="Elapsed time" xml:space="preserve">
+    <data name="txt_elapsed_time" xml:space="preserve">
         <value>Elapsed time</value>
+    </data>
+    <data name="msg_unknown_error" xml:space="preserve">
+        <value>Unknown error</value>
+    </data>
+    <data name="msg_connection_error" xml:space="preserve">
+        <value>Connection error</value>
+    </data>
+    <data name="msg_end_of_file_error" xml:space="preserve">
+        <value>End of file</value>
+    </data>
+    <data name="msg_invalid_data_error" xml:space="preserve">
+        <value>Invalid data</value>
+    </data>
+    <data name="msg_not_found_error" xml:space="preserve">
+        <value>Not found</value>
+    </data>
+    <data name="msg_operation_cancelled_error" xml:space="preserve">
+        <value>Operation cancelled</value>
+    </data>
+    <data name="msg_scanning_error" xml:space="preserve">
+        <value>Scanning error</value>
+    </data>
+    <data name="msg_timeout_error" xml:space="preserve">
+        <value>Timeout</value>
+    </data>
+    <data name="msg_wrong_station_error" xml:space="preserve">
+        <value>Wrong station</value>
     </data>
 </root>

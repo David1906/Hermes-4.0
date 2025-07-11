@@ -3,7 +3,7 @@ using Core.Domain;
 
 namespace Infrastructure.Data.Features.Defects;
 
-public class DefectDbModel
+public class DefectDto
 {
     public int Id { get; set; }
     public ErrorFlagType ErrorFlag { get; set; } = ErrorFlagType.Good;

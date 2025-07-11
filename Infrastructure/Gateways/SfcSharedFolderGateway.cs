@@ -5,15 +5,14 @@ using Core.Application.Common.Errors;
 using Core.Application.Common.Gateways;
 using Core.Domain;
 using R3;
-using UnknownError = Core.Domain.Common.Errors.UnknownError;
 
 namespace Infrastructure.Gateways;
 
-public class LogfilesSfcGateway(
-    LogfilesGatewayOptions options,
+public class SfcSharedFolderGateway(
+    SfcSharedFolderGatewayOptions options,
     TimeProvider timeProvider,
     IFileSystemWatcherRx fileSystemWatcherRx,
-    IResilientFileSystem resilientFileSystem) : ILogfilesSfcGateway
+    IResilientFileSystem resilientFileSystem) : ISfcSharedFolderGateway
 {
     public async Task<ResultOf<Logfile>> SendPanelToNextStationAsync(
         Logfile logfileToUpload,

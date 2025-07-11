@@ -60,11 +60,83 @@ namespace Common.Languages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Elapsed time.
+        ///   Looks up a localized string similar to Connection error.
         /// </summary>
-        public static string Elapsed_time {
+        public static string msg_connection_error {
             get {
-                return ResourceManager.GetString("Elapsed time", resourceCulture);
+                return ResourceManager.GetString("msg_connection_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End of file.
+        /// </summary>
+        public static string msg_end_of_file_error {
+            get {
+                return ResourceManager.GetString("msg_end_of_file_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid data.
+        /// </summary>
+        public static string msg_invalid_data_error {
+            get {
+                return ResourceManager.GetString("msg_invalid_data_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not found.
+        /// </summary>
+        public static string msg_not_found_error {
+            get {
+                return ResourceManager.GetString("msg_not_found_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation cancelled.
+        /// </summary>
+        public static string msg_operation_cancelled_error {
+            get {
+                return ResourceManager.GetString("msg_operation_cancelled_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scanning error.
+        /// </summary>
+        public static string msg_scanning_error {
+            get {
+                return ResourceManager.GetString("msg_scanning_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timeout.
+        /// </summary>
+        public static string msg_timeout_error {
+            get {
+                return ResourceManager.GetString("msg_timeout_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown error.
+        /// </summary>
+        public static string msg_unknown_error {
+            get {
+                return ResourceManager.GetString("msg_unknown_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrong station.
+        /// </summary>
+        public static string msg_wrong_station_error {
+            get {
+                return ResourceManager.GetString("msg_wrong_station_error", resourceCulture);
             }
         }
         
@@ -74,6 +146,15 @@ namespace Common.Languages {
         public static string txt_all {
             get {
                 return ResourceManager.GetString("txt_all", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elapsed time.
+        /// </summary>
+        public static string txt_elapsed_time {
+            get {
+                return ResourceManager.GetString("txt_elapsed_time", resourceCulture);
             }
         }
         

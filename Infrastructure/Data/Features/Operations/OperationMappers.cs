@@ -1,4 +1,6 @@
+using Common.ResultOf;
 using Core.Domain;
+using Infrastructure.Data.Features.Errors;
 using Infrastructure.Data.Features.Logfiles;
 using Riok.Mapperly.Abstractions;
 
@@ -9,9 +11,13 @@ public static partial class OperationMappers
 {
     [MapperIgnoreSource(nameof(Operation.IsFailure))]
     [MapperIgnoreSource(nameof(Operation.Title))]
-    public static partial OperationDbModel ToDbModel(this Operation operation);
+    [MapperIgnoreSource(nameof(Operation.TranslatedErrorType))]
+    public static partial OperationDto ToDto(this Operation operation);
 
-    private static LogfileDbModel ToDbModel(Logfile logfile) => logfile.ToDbModel();
+    private static LogfileDto ToDto(Logfile logfile) => logfile.ToDto();
+    private static ErrorDto ToDto(Error error) => error.ToDto();
 
-    public static partial Operation ToDomainModel(this OperationDbModel operationDbModel);
+    public static partial Operation ToDomainModel(this OperationDto operationDto);
+
+    private static Error ToDomainModel(ErrorDto errorDto) => errorDto.ToDomainModel();
 }

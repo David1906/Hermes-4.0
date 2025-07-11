@@ -12,7 +12,7 @@ namespace Infrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ErrorDbModel",
+                name: "Errors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -22,7 +22,7 @@ namespace Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ErrorDbModel", x => x.Id);
+                    table.PrimaryKey("PK_Errors", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -60,48 +60,47 @@ namespace Infrastructure.Data.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Index = table.Column<int>(type: "INTEGER", nullable: false),
                     SerialNumber = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
-                    PanelDbModelId = table.Column<int>(type: "INTEGER", nullable: true)
+                    PanelDtoId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Boards", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Boards_Panels_PanelDbModelId",
-                        column: x => x.PanelDbModelId,
+                        name: "FK_Boards_Panels_PanelDtoId",
+                        column: x => x.PanelDtoId,
                         principalTable: "Panels",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "OperationDbModel",
+                name: "Operations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
-                    ErrorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ErrorId = table.Column<int>(type: "INTEGER", nullable: true),
                     LogfileId = table.Column<int>(type: "INTEGER", nullable: true),
                     StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EndTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    PanelDbModelId = table.Column<int>(type: "INTEGER", nullable: true)
+                    PanelDtoId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OperationDbModel", x => x.Id);
+                    table.PrimaryKey("PK_Operations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OperationDbModel_ErrorDbModel_ErrorId",
+                        name: "FK_Operations_Errors_ErrorId",
                         column: x => x.ErrorId,
-                        principalTable: "ErrorDbModel",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "Errors",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_OperationDbModel_Logfiles_LogfileId",
+                        name: "FK_Operations_Logfiles_LogfileId",
                         column: x => x.LogfileId,
                         principalTable: "Logfiles",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_OperationDbModel_Panels_PanelDbModelId",
-                        column: x => x.PanelDbModelId,
+                        name: "FK_Operations_Panels_PanelDtoId",
+                        column: x => x.PanelDtoId,
                         principalTable: "Panels",
                         principalColumn: "Id");
                 });
@@ -115,42 +114,42 @@ namespace Infrastructure.Data.Migrations
                     ErrorFlag = table.Column<int>(type: "INTEGER", nullable: false),
                     Location = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     ErrorCode = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
-                    BoardDbModelId = table.Column<int>(type: "INTEGER", nullable: true)
+                    BoardDtoId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Defects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Defects_Boards_BoardDbModelId",
-                        column: x => x.BoardDbModelId,
+                        name: "FK_Defects_Boards_BoardDtoId",
+                        column: x => x.BoardDtoId,
                         principalTable: "Boards",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Boards_PanelDbModelId",
+                name: "IX_Boards_PanelDtoId",
                 table: "Boards",
-                column: "PanelDbModelId");
+                column: "PanelDtoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Defects_BoardDbModelId",
+                name: "IX_Defects_BoardDtoId",
                 table: "Defects",
-                column: "BoardDbModelId");
+                column: "BoardDtoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OperationDbModel_ErrorId",
-                table: "OperationDbModel",
+                name: "IX_Operations_ErrorId",
+                table: "Operations",
                 column: "ErrorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OperationDbModel_LogfileId",
-                table: "OperationDbModel",
+                name: "IX_Operations_LogfileId",
+                table: "Operations",
                 column: "LogfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OperationDbModel_PanelDbModelId",
-                table: "OperationDbModel",
-                column: "PanelDbModelId");
+                name: "IX_Operations_PanelDtoId",
+                table: "Operations",
+                column: "PanelDtoId");
         }
 
         /// <inheritdoc />
@@ -160,13 +159,13 @@ namespace Infrastructure.Data.Migrations
                 name: "Defects");
 
             migrationBuilder.DropTable(
-                name: "OperationDbModel");
+                name: "Operations");
 
             migrationBuilder.DropTable(
                 name: "Boards");
 
             migrationBuilder.DropTable(
-                name: "ErrorDbModel");
+                name: "Errors");
 
             migrationBuilder.DropTable(
                 name: "Logfiles");

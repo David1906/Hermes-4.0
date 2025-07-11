@@ -33,7 +33,7 @@ public class ProcessPanelFromLogfileHandler(
         }
 
         command.Result = await this.SendPanelToNextStation(panelResult.Value, command, cancellationToken);
-
+        await uow.PanelsRepository.AddAsync(command.Result.Value, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);
         return await base.HandleAsync(command, cancellationToken);
     }

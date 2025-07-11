@@ -1,9 +1,11 @@
 namespace Common.ResultOf;
 
-public class Error
+public abstract class Error
 {
+    public int Id { get; set; }
     public string Message { get; }
     public string ErrorType { get; }
+    public abstract string TranslatedErrorType { get; }
 
     public Error(string message)
     {

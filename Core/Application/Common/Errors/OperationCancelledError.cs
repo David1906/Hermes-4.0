@@ -1,3 +1,4 @@
+using Common.Languages;
 using Common.ResultOf;
 
 namespace Core.Application.Common.Errors;
@@ -9,4 +10,6 @@ public class OperationCancelledError(string message)
         : this("Operation cancelled")
     {
     }
+
+    public override string TranslatedErrorType => Resources.msg_operation_cancelled_error;
 }

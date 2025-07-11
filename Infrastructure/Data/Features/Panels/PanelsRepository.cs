@@ -8,9 +8,9 @@ namespace Infrastructure.Data.Features.Panels;
 
 public class PanelsRepository(HermesContext hermesContext) : IPanelsRepository
 {
-    public async Task<ResultOf<Panel>> AddAsync(Panel panel, CancellationToken ct)
+    public async Task<ResultOf<Panel>> AddAsync(Panel panel, CancellationToken ct = default)
     {
-        var dbModel = panel.ToDbModel();
+        var dbModel = panel.ToDto();
         await hermesContext.Panels.AddAsync(dbModel, ct);
         return dbModel.ToDomainModel();
     }

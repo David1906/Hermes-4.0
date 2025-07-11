@@ -11,6 +11,7 @@ namespace Desktop.Features.Stops.Delivery;
 public partial class StopViewModel : ViewModelBase
 {
     public string Title { get; set; } = "Stop";
+    public string ErrorType { get; set; } = "";
     public string SerialNumber { get; set; } = "";
     public string Actions { get; set; } = "";
     public DateTime StartTime { get; set; } = DateTime.Now;

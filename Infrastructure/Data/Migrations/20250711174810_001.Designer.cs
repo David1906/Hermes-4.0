@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(HermesContext))]
-    [Migration("20250710234239_001")]
+    [Migration("20250711174810_001")]
     partial class _001
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Infrastructure.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Boards.BoardDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Boards.BoardDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,7 +29,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("Index")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("PanelDbModelId")
+                    b.Property<int?>("PanelDtoId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SerialNumber")
@@ -39,18 +39,18 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PanelDbModelId");
+                    b.HasIndex("PanelDtoId");
 
                     b.ToTable("Boards", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Defects.DefectDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Defects.DefectDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BoardDbModelId")
+                    b.Property<int?>("BoardDtoId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ErrorCode")
@@ -68,12 +68,12 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BoardDbModelId");
+                    b.HasIndex("BoardDtoId");
 
                     b.ToTable("Defects", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Errors.ErrorDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Errors.ErrorDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,10 +91,10 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ErrorDbModel");
+                    b.ToTable("Errors", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Logfiles.LogfileDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Logfiles.LogfileDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,7 +113,7 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Logfiles", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Operations.OperationDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Operations.OperationDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -122,13 +122,13 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ErrorId")
+                    b.Property<int?>("ErrorId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("LogfileId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("PanelDbModelId")
+                    b.Property<int?>("PanelDtoId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("StartTime")
@@ -143,12 +143,12 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("LogfileId");
 
-                    b.HasIndex("PanelDbModelId");
+                    b.HasIndex("PanelDtoId");
 
-                    b.ToTable("OperationDbModel");
+                    b.ToTable("Operations", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Panels.PanelDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Panels.PanelDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -164,47 +164,45 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Panels", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Boards.BoardDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Boards.BoardDto", b =>
                 {
-                    b.HasOne("Infrastructure.Data.Features.Panels.PanelDbModel", null)
+                    b.HasOne("Infrastructure.Data.Features.Panels.PanelDto", null)
                         .WithMany("Boards")
-                        .HasForeignKey("PanelDbModelId");
+                        .HasForeignKey("PanelDtoId");
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Defects.DefectDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Defects.DefectDto", b =>
                 {
-                    b.HasOne("Infrastructure.Data.Features.Boards.BoardDbModel", null)
+                    b.HasOne("Infrastructure.Data.Features.Boards.BoardDto", null)
                         .WithMany("Defects")
-                        .HasForeignKey("BoardDbModelId");
+                        .HasForeignKey("BoardDtoId");
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Operations.OperationDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Operations.OperationDto", b =>
                 {
-                    b.HasOne("Infrastructure.Data.Features.Errors.ErrorDbModel", "Error")
+                    b.HasOne("Infrastructure.Data.Features.Errors.ErrorDto", "Error")
                         .WithMany()
-                        .HasForeignKey("ErrorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ErrorId");
 
-                    b.HasOne("Infrastructure.Data.Features.Logfiles.LogfileDbModel", "Logfile")
+                    b.HasOne("Infrastructure.Data.Features.Logfiles.LogfileDto", "Logfile")
                         .WithMany()
                         .HasForeignKey("LogfileId");
 
-                    b.HasOne("Infrastructure.Data.Features.Panels.PanelDbModel", null)
+                    b.HasOne("Infrastructure.Data.Features.Panels.PanelDto", null)
                         .WithMany("Operations")
-                        .HasForeignKey("PanelDbModelId");
+                        .HasForeignKey("PanelDtoId");
 
                     b.Navigation("Error");
 
                     b.Navigation("Logfile");
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Boards.BoardDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Boards.BoardDto", b =>
                 {
                     b.Navigation("Defects");
                 });
 
-            modelBuilder.Entity("Infrastructure.Data.Features.Panels.PanelDbModel", b =>
+            modelBuilder.Entity("Infrastructure.Data.Features.Panels.PanelDto", b =>
                 {
                     b.Navigation("Boards");
 

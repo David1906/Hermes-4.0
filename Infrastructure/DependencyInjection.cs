@@ -20,20 +20,21 @@ public static class DependencyInjection
 
     private static IServiceCollection AddData(this IServiceCollection services)
         => services
-            .AddScoped<HermesContext>()
-            .AddScoped<IUnitOfWork, UnitOfWork>()
+            .AddSingleton<HermesContext>()
+            .AddSingleton<IUnitOfWork, UnitOfWork>()
             .AddTransient<IPanelsRepository, PanelsRepository>()
             .AddTransient<ILogfilesRepository, LogfilesRepository>();
 
     private static IServiceCollection AddFileParser(this IServiceCollection services)
         => services
-            .AddScoped<IPanelParser, PanelParser>()
-            .AddScoped<IOperationParser, OperationParser>()
-            .AddScoped<TriMachineOperationParser>()
-            .AddScoped<SfcResponseOperationParser>();
+            .AddSingleton<IPanelParser, PanelParser>()
+            .AddSingleton<IOperationParser, OperationParser>()
+            .AddSingleton<ISfcResponseOperationParser, SfcResponseOperationParser>()
+            .AddSingleton<TriMachineOperationParser>()
+            .AddSingleton<SfcResponseOperationParser>();
 
     private static IServiceCollection AddGateways(this IServiceCollection services)
         => services
-            .AddTransient<LogfilesGatewayOptions>()
-            .AddSingleton<ILogfilesSfcGateway, LogfilesSfcGateway>();
+            .AddTransient<SfcSharedFolderGatewayOptions>()
+            .AddSingleton<ISfcSharedFolderGateway, SfcSharedFolderGateway>();
 }

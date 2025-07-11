@@ -1,3 +1,5 @@
+using Common.Languages;
+
 namespace Common.ResultOf;
 
 public class UnknownError : Error
@@ -11,4 +13,6 @@ public class UnknownError : Error
         : base(message)
     {
     }
+
+    public override string TranslatedErrorType => Resources.msg_unknown_error;
 }

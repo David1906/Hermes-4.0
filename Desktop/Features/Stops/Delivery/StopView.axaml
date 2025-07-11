@@ -67,6 +67,13 @@
                             <Run Text=": " />
                             <Run Text="{Binding SerialNumber}" />
                         </TextBlock>
+
+                        <TextBlock>
+                            <!-- <Run Text="{x:Static lang:Resources.txt_serial_number}" /> -->
+                            <Run Text="Error" />
+                            <Run Text=": " />
+                            <Run Text="{Binding ErrorType}" />
+                        </TextBlock>
                     </WrapPanel>
                 </Grid>
             </Border>
@@ -96,7 +103,7 @@
 
             <!-- Footer -->
             <TextBlock Grid.Row="2">
-                <Run Text="{x:Static lang:Resources.Elapsed_time}" />
+                <Run Text="{x:Static lang:Resources.txt_elapsed_time}" />
                 <Run Text=":" />
                 <Run Text="{Binding ElapsedTime}"></Run>
             </TextBlock>

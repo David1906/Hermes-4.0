@@ -3,7 +3,7 @@ using Core.Domain;
 
 namespace Core.Application.Common.Gateways;
 
-public interface ILogfilesSfcGateway
+public interface ISfcSharedFolderGateway
 {
     Task<ResultOf<Logfile>> SendPanelToNextStationAsync(
         Logfile logfileToUpload,

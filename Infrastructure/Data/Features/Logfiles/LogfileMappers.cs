@@ -10,15 +10,15 @@ public static partial class LogfileMappers
     [MapperIgnoreSource(nameof(Logfile.FullName))]
     [MapperIgnoreSource(nameof(Logfile.Name))]
     [MapperIgnoreSource(nameof(Logfile.Exists))]
-    [MapProperty(nameof(Logfile.FileInfo), nameof(LogfileDbModel.FileInfo), Use = nameof(MapFileInfo))]
-    public static partial LogfileDbModel ToDbModel(this Logfile logfile);
+    [MapProperty(nameof(Logfile.FileInfo), nameof(LogfileDto.FileInfo), Use = nameof(MapFileInfo))]
+    public static partial LogfileDto ToDto(this Logfile logfile);
 
     private static string MapFileInfo(FileInfo fileInfo)
         => fileInfo.FullName;
 
-    [MapProperty(nameof(LogfileDbModel.FileInfo), nameof(Logfile.FileInfo),
+    [MapProperty(nameof(LogfileDto.FileInfo), nameof(Logfile.FileInfo),
         Use = nameof(MapStringToFileInfo))]
-    public static partial Logfile ToDomainModel(this LogfileDbModel logfileDbModel);
+    public static partial Logfile ToDomainModel(this LogfileDto logfileDto);
 
     private static FileInfo MapStringToFileInfo(string fullPath)
         => new FileInfo(fullPath);

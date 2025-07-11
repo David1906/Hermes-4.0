@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:sqlite:$USER_HOME$/AppData/Local/Hermes4/dbSqlite.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="dbSqliteInfrastructure.db" uuid="efb04dd1-eda8-4465-8913-1342547f9960">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$USER_HOME$/AppData/Local/Hermes4/dbSqliteInfrastructure.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

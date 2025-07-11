@@ -14,6 +14,7 @@ public class Operation
     public bool IsFailure => Error is not null;
 
     public string Title => this.Error?.Message ?? Type.ToString();
+    public string TranslatedErrorType => this.Error?.TranslatedErrorType ?? "";
 
     public void Start()
     {

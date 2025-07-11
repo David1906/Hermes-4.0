@@ -20,6 +20,7 @@ public class ShowStopHandler(
         var stopViewModel = serviceProvider.GetRequiredService<StopViewModel>();
         stopViewModel.SerialNumber = @event.SerialNumber;
         stopViewModel.Title = @event.Title;
+        stopViewModel.ErrorType = @event.ErrorType;
         stopViewModel.Departments = @event.Departments;
         commandProcessor.Publish(new OpenWindowEvent { ViewModel = stopViewModel });
         return await base.HandleAsync(@event, cancellationToken);

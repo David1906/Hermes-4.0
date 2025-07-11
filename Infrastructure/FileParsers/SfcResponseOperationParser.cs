@@ -1,13 +1,13 @@
 using Common.ResultOf;
 using Common;
+using Core.Application.Common.Errors;
 using Core.Domain;
 using System.Text.RegularExpressions;
-using Core.Application.Common.Errors;
-using UnknownError = Core.Domain.Common.Errors.UnknownError;
+using Core.Application.Common.FileParsers;
 
 namespace Infrastructure.FileParsers;
 
-public class SfcResponseOperationParser(IResilientFileSystem fileSystem)
+public class SfcResponseOperationParser(IResilientFileSystem fileSystem) : ISfcResponseOperationParser
 {
     private const RegexOptions RgxOptions = RegexOptions.IgnoreCase | RegexOptions.Multiline;
     private static readonly Regex RegexWrongStation = new(@"^go-.+[\r\n]+", RgxOptions);
@@ -32,6 +32,12 @@ public class SfcResponseOperationParser(IResilientFileSystem fileSystem)
             Type = OperationType.SendPanelToNextStation,
             Error = errors.First()
         };
+    }
+
+    public async Task<Error?> ParseErrorAsync(Logfile logfile, string okResponses)
+    {
+        var content = await fileSystem.ReadAllTextAsync(logfile.FileInfo.FullName);
+        return ExtractResult(content, okResponses);
     }
 
     private Error? ExtractResult(string content, string okResponses)

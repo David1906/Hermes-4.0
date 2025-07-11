@@ -1,6 +1,5 @@
 using Core.Domain;
 using Infrastructure.Data.Features.Boards;
-using Infrastructure.Data.Features.Logfiles;
 using Infrastructure.Data.Features.Operations;
 using Riok.Mapperly.Abstractions;
 
@@ -11,12 +10,13 @@ public static partial class PanelMappers
 {
     [MapperIgnoreSource(nameof(Panel.MainSerialNumber))]
     [MapperIgnoreSource(nameof(Panel.ContainsFailedBoard))]
-    public static partial PanelDbModel ToDbModel(this Panel panel);
+    public static partial PanelDto ToDto(this Panel panel);
 
-    private static BoardDbModel ToDbModel(Board board) => board.ToDbModel();
-    private static OperationDbModel ToDbModel(Operation operation) => operation.ToDbModel();
+    private static BoardDto ToDto(Board board) => board.ToDto();
+    private static OperationDto ToDto(Operation operation) => operation.ToDto();
 
-    public static partial Panel ToDomainModel(this PanelDbModel panelDbModel);
+    public static partial Panel ToDomainModel(this PanelDto panelDto);
 
-    private static Board ToDomainModel(BoardDbModel boardDbModel) => boardDbModel.ToDomainModel();
+    private static Board ToDomainModel(BoardDto boardDto) => boardDto.ToDomainModel();
+    private static Operation ToDomainModel(OperationDto operationDto) => operationDto.ToDomainModel();
 }

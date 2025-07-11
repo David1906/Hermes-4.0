@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Data.Features.Logfiles;
 
-public class LogfileDbModel
+public class LogfileDto
 {
     public int Id { get; set; }
     [MaxLength(255)] public string FileInfo { get; set; } = "";

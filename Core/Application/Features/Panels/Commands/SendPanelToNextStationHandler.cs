@@ -1,7 +1,7 @@
 using Common.ResultOf;
-using Core.Application.Common.Data;
 using Core.Application.Common.Errors;
 using Core.Application.Common.Events;
+using Core.Application.Common.FileParsers;
 using Core.Application.Common.Gateways;
 using Core.Application.Common.Types;
 using Core.Application.Features.Logfiles.Commands;
@@ -11,9 +11,9 @@ using Paramore.Brighter;
 namespace Core.Application.Features.Panels.Commands;
 
 public class SendPanelToNextStationHandler(
-    IUnitOfWork uow,
     IAmACommandProcessor commandProcessor,
-    ILogfilesSfcGateway logfilesSfcGateway
+    ISfcSharedFolderGateway sfcSharedFolderGateway,
+    ISfcResponseOperationParser sfcResponseOperationParser
 ) : RequestHandlerAsync<SendPanelToNextStationCommand>
 {
     public override async Task<SendPanelToNextStationCommand> HandleAsync(
@@ -32,14 +32,12 @@ public class SendPanelToNextStationHandler(
         }
 
         await this.SendPanelToNextStation(operation, command, cancellationToken);
-        // TODO: Convertir contenido de respuesta en error
         if (operation.IsFailure)
         {
             await SendShowStopEventAsync(command, cancellationToken, operation);
             return await base.HandleAsync(command, cancellationToken);
         }
 
-        await uow.SaveChangesAsync(cancellationToken);
         await SendSuccessEventAsync(command, cancellationToken);
         return await base.HandleAsync(command, cancellationToken);
     }
@@ -61,6 +59,7 @@ public class SendPanelToNextStationHandler(
         await commandProcessor.SendAsync(new ShowStopEvent()
         {
             Title = operation.Title,
+            ErrorType = operation.TranslatedErrorType,
             SerialNumber = command.Panel.MainSerialNumber,
             Departments = [DepartmentType.EE]
         }, cancellationToken: cancellationToken);
@@ -77,12 +76,18 @@ public class SendPanelToNextStationHandler(
         SendPanelToNextStationCommand command,
         CancellationToken ct)
     {
-        await logfilesSfcGateway.SendPanelToNextStationAsync(
+        await sfcSharedFolderGateway.SendPanelToNextStationAsync(
                 command.InputLogfile,
                 command.MaxRetries,
                 command.Timeout,
                 ct)
             .Bind((x, _) => MoveLogfileToBackupAsync(x, command.BackupDirectory, ct), ct: ct)
+            .OnSuccess(async logfile =>
+            {
+                operation.Logfile = logfile;
+                operation.Error = await sfcResponseOperationParser.ParseErrorAsync(logfile, command.OkResponses);
+                operation.End();
+            })
             .OnFailure(operation.End);
     }
 
