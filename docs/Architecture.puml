@@ -1,77 +1,90 @@
 @startuml
 
-'---- Domain Layer ----
-package Domain {
-    package Users {
+'---- Core Layer ----
+package Core {
+
+    '---- Domain Layer ----
+    package Domain {
+        package Users {  
+            class User {
+                + string Name
+                + int Age
+            }
+        }
+    }
+
+    '---- Application Layer ----
+    package Application {   
+        package Common{
+            package Data {
+                interface IUsersRepository
+                IUsersRepository ..> User
+            }
+        }
     
-        class AddUserRequest {
-            + string Name
-            + int Age
+        package Features {
+            package Users {  
+                package Commands {
+                        class AddUserCommand {
+                            + Name
+                            + Age
+                        }
+                        class AddUserCommandHandler {
+                            + Task Execute(AddUserCommand request)
+                        }
+                        AddUserCommandHandler *-down-> IUsersRepository
+                        AddUserCommandHandler .down.> AddUserCommand
+                    }    
+                }
+            }
         }
-            
-        class User {
-            + string Name
-            + int Age
+}
+
+'---- Infrastructure Layer ----
+package Infrastructure {
+    package Data {
+        package Features {
+            package Users {        
+                class UsersRepository {
+                    + Task<User> AddUser(AddUserRequest request)
+                }        
+                UsersRepository -up-|> Core.Application.Common.Data.IUsersRepository
+                UsersRepository .down.> Core.Domain.Users.User
+                UsersRepository .down.> UserDto
+                UsersRepository .down.> UsersMapper
+                
+                class UserDto {
+                    + Id
+                    + Name
+                    + Age
+                    + CreatedAt
+                    + IsDeleted
+                } 
+                
+                class UsersMapper{
+                    + ToDto
+                    + ToDomainModel
+                } 
+                UsersMapper .down.> UserDto
+                UsersMapper .down.> User
+
+            } 
         }
     }
 }
 
-'---- Notificator Layer ----
-package Notificator {
-    package Users {
-        interface IEventNotificator {
-            + Task Notify<T>(T message)
-        }
-    }
-}
-
-'---- Data Layer ----
-package Data {
-    package Users {
-    
-        interface IUsersRepository {
-            + Task<User> AddUser(AddUserRequest request)
-        }        
-        IUsersRepository .down.> Domain.Users.AddUserRequest
-        IUsersRepository .down.> Domain.Users.User
-    }
-}
-
-'---- UseCases Layer ----
-package UseCases {
-    package Users {      
-            
-        class AddUserHandler {
-            + Task Execute(AddUserRequest request)
-        }
-        AddUserHandler .down.> AddUserRequest
-        AddUserHandler .down.> Domain.Users.User
-        AddUserHandler *-down-> Data.Users.IUsersRepository
-        AddUserHandler *-down-> Notificator.Users.IEventNotificator
-        
-        class UsersUseCases {
-            + AddUser
-        }
-        UsersUseCases .down.> UseCases.Users.AddUserHandler
-    }
-}
-
-'---- API Layer ----
-package API{
-    package Controllers {
-        class UsersController {
-            + Task<IActionResult> Post(AddUserRequest request)
-        }
-        UsersController *-down-> UseCases.Users.UsersUseCases
-        UsersController .down.> Domain.Users.AddUserRequest
-    }
-}
+class CommandProcessor
+CommandProcessor -down-> Core.Application.Features.Users.Commands.AddUserCommandHandler
 
 '---- Desktop Layer ----
-package Desktop {
-    package Users {
-        class UsersViewModel {}
-        UsersViewModel *-down-> UseCases.Users.UsersUseCases
+package UI {
+    package Features {
+        package Users {
+            class UsersViewModel {}
+            UsersViewModel *-down-> CommandProcessor
+            UsersViewModel .down.> Core.Application.Features.Users.Commands.AddUserCommand
+
+        }
     }
 }
 @enduml

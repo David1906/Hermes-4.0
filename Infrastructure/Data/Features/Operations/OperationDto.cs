@@ -2,6 +2,7 @@ using Core.Domain;
 using Infrastructure.Data.Features.Errors;
 using Infrastructure.Data.Features.Logfiles;
 using System.ComponentModel.DataAnnotations;
+using Core.Domain.Common.Types;
 
 namespace Infrastructure.Data.Features.Operations;
 

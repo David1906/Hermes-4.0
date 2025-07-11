@@ -1,5 +1,5 @@
 using Core.Application.Common.Events;
-using Core.Application.Common.Types;
+using Core.Domain.Common.Types;
 using Paramore.Brighter;
 
 namespace Core.Application.Common.Extensions;

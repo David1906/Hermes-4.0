@@ -1,3 +1,5 @@
+using Core.Domain.Common.Types;
+
 namespace Core.Domain;
 
 public class Defect

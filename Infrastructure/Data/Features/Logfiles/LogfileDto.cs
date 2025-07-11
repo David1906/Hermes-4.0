@@ -1,5 +1,6 @@
 using Core.Domain;
 using System.ComponentModel.DataAnnotations;
+using Core.Domain.Common.Types;
 
 namespace Infrastructure.Data.Features.Logfiles;
 

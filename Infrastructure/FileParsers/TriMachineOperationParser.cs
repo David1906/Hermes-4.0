@@ -3,6 +3,7 @@ using Core.Domain;
 using System.Text.RegularExpressions;
 using Common.ResultOf;
 using Core.Application.Common.Errors;
+using Core.Domain.Common.Types;
 using Infrastructure.Data.Features.Operations;
 
 namespace Infrastructure.FileParsers;

@@ -3,9 +3,9 @@ using Core.Application.Common.Errors;
 using Core.Application.Common.Events;
 using Core.Application.Common.FileParsers;
 using Core.Application.Common.Gateways;
-using Core.Application.Common.Types;
 using Core.Application.Features.Logfiles.Commands;
 using Core.Domain;
+using Core.Domain.Common.Types;
 using Paramore.Brighter;
 
 namespace Core.Application.Features.Panels.Commands;
@@ -47,7 +47,7 @@ public class SendPanelToNextStationHandler(
         await commandProcessor.SendAsync(new ShowSuccessEvent()
         {
             Title = "OK",
-            SerialNumber = command.Panel.MainSerialNumber,
+            MainSerialNumber = command.Panel.MainSerialNumber,
             IsRepair = command.Panel.ContainsFailedBoard
         }, cancellationToken: cancellationToken);
     }

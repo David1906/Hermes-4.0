@@ -1,4 +1,5 @@
 using Common.ResultOf;
+using Core.Domain.Common.Types;
 
 namespace Core.Domain;
 
@@ -12,6 +13,7 @@ public class Operation
     public DateTime EndTime { get; set; } = DateTime.Now;
 
     public bool IsFailure => Error is not null;
+    public bool IsPass => !IsFailure;
 
     public string Title => this.Error?.Message ?? Type.ToString();
     public string TranslatedErrorType => this.Error?.TranslatedErrorType ?? "";

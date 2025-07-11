@@ -4,6 +4,7 @@ using Core.Application.Common.Errors;
 using Core.Application.Common.FileParsers;
 using Core.Domain;
 using System.Text.RegularExpressions;
+using Core.Domain.Common.Types;
 
 namespace Infrastructure.FileParsers;
 

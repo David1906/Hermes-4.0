@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Domain;
+using Core.Domain.Common.Types;
 
 namespace Infrastructure.Data.Features.Defects;
 

@@ -1,5 +1,6 @@
 using Common.ResultOf;
 using Core.Domain;
+using Core.Domain.Common.Types;
 using Paramore.Brighter;
 
 namespace Core.Application.Features.Panels.Commands;

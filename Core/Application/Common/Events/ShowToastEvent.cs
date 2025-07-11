@@ -1,4 +1,4 @@
-using Core.Application.Common.Types;
+using Core.Domain.Common.Types;
 using Paramore.Brighter;
 
 namespace Core.Application.Common.Events;

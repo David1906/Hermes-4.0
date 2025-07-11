@@ -1,4 +1,4 @@
-using Core.Application.Common.Types;
+using Core.Domain.Common.Types;
 
 namespace Core.Application.Common.Gateways;
 

@@ -1,0 +1,34 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="UI.App"
+             xmlns:sukiUi="clr-namespace:SukiUI;assembly=SukiUI"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:common="clr-namespace:UI.Common"
+             RequestedThemeVariant="Default">
+
+    <Application.DataTemplates>
+        <common:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <sukiUi:SukiTheme ThemeColor="Blue" />
+    </Application.Styles>
+
+    <Application.Resources>
+        <SolidColorBrush x:Key="LightRedColor" Color="#ce3f39" />
+        <SolidColorBrush x:Key="DarkRedColor" Color="#a8342f" />
+        <SolidColorBrush x:Key="DarkBlueColor" Color="#3F51B5" />
+        <SolidColorBrush x:Key="DarkGreenColor" Color="#3c5432" />
+        <SolidColorBrush x:Key="LightGreenColor" Color="#537834" />
+        <SolidColorBrush x:Key="LightYellowColor" Color="#BE975D" />
+        <SolidColorBrush x:Key="DarkYellowColor" Color="#d48806" />
+
+        <system:Double x:Key="StopWindowMaxWidth">1024</system:Double>
+        <system:Double x:Key="DefaultIconSize">20</system:Double>
+        <system:Double x:Key="DefaultSpacing">10</system:Double>
+        <Thickness x:Key="DefaultMargin">10</Thickness>
+        <Thickness x:Key="DefaultPadding">10</Thickness>
+        <Thickness x:Key="DefaultLeftMargin">10 0 0 0</Thickness>
+        <CornerRadius x:Key="DefaultCornerRadius">5</CornerRadius>
+    </Application.Resources>
+</Application>

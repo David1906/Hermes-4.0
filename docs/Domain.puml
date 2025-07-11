@@ -1,13 +1,23 @@
 @startuml
 
-class Operation
-Operation *-down-> "+" Task
+class Operation {
+    DateTime StartTime
+    DateTime EndTime
+}
+Operation *--> OperationType
+Operation *--> "?" Error
+Operation --> "?" Logfile
 
-class Task
-Task *-down-> Uut
+enum OperationType {
+    MachineOperation
+    SendPanelToNextStation
+}
 
-class Uut
-Uut *-down-> "+" Board
+class Panel
+Panel --> "+" Board
+Panel o--> "*" Operation
 
 class Board
+Board o--> "*" Defect
+
 @enduml
