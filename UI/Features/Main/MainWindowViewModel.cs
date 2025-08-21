@@ -4,13 +4,27 @@ using Infrastructure.Data;
 using R3;
 using SukiUI.Toasts;
 using UI.Common;
-using UI.Features.Operations;
 using UI.Handlers;
+using PanelProcessorViewModel = UI.Features.Panels.PanelProcessorViewModel;
 
 namespace UI.Features.Main;
 
-public partial class MainWindowViewModel : ViewModelBase
+public class MainWindowViewModel : ViewModelBase
 {
+    private readonly EventsHandler _eventsHandler;
+
+    public MainWindowViewModel(
+        EventsHandler eventsHandler,
+        HermesContext hermesContext,
+        PanelProcessorViewModel panelProcessorViewModel)
+    {
+        _eventsHandler = eventsHandler;
+        PanelProcessorViewModel = panelProcessorViewModel;
+
+        hermesContext.Migrate();
+        SetupRx();
+    }
+
     public PanelProcessorViewModel PanelProcessorViewModel { get; }
     public ISukiToastManager ToastManager { get; } = new SukiToastManager();
     public string Email { get; set; } = "";
@@ -19,30 +33,16 @@ public partial class MainWindowViewModel : ViewModelBase
     public BindableReactiveProperty<StateType> MachineState { get; } = new(StateType.Stopped);
     public BindableReactiveProperty<bool> IsConnected { get; } = new(false);
 
-    private readonly EventsHandler _eventsHandler;
-
-    public MainWindowViewModel(
-        EventsHandler eventsHandler,
-        HermesContext hermesContext,
-        PanelProcessorViewModel panelProcessorViewModel)
-    {
-        this._eventsHandler = eventsHandler;
-        this.PanelProcessorViewModel = panelProcessorViewModel;
-
-        hermesContext.Migrate();
-        this.SetupRx();
-    }
-
     private void SetupRx()
     {
         _eventsHandler.ShowToast
-            .Subscribe(this.ShowToast)
+            .Subscribe(ShowToast)
             .AddTo(ref Disposables);
     }
 
     private void ShowToast(string message, NotificationType notificationType)
     {
-        this.ShowToast(new ShowToastEvent()
+        ShowToast(new ShowToastEvent
         {
             Message = message,
             ToastType = notificationType
@@ -58,9 +58,7 @@ public partial class MainWindowViewModel : ViewModelBase
             .Dismiss().ByClicking();
 
         if (@event.ToastType != NotificationType.Error || @event.AutoDismiss)
-        {
             toastBuilder.Dismiss().After(@event.AutoDismissDelay);
-        }
 
         toastBuilder.Queue();
     }

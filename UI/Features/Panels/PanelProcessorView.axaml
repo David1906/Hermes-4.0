@@ -2,10 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:operations="clr-namespace:UI.Features.Operations"
+             xmlns:panels="clr-namespace:UI.Features.Panels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="UI.Features.Panels.PanelProcessorView"
-             x:DataType="operations:PanelProcessorViewModel">
+             x:DataType="panels:PanelProcessorViewModel">
     <StackPanel>
         <TextBlock Text="{Binding MachineState.Value, StringFormat=State: {0} }" />
 

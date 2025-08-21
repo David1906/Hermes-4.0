@@ -1,26 +1,36 @@
 @startuml Use cases
 left to right direction
 
-usecase (MoveLogfileToBackup)
-usecase (CreatePanelFromLogfile)
-usecase (SendPanelToNextStation)
-usecase (ShowStop)
-usecase (ShowSuccess)
-usecase (CalculateThreeFiveTenStop)
-usecase (CalculateCriticalComponentStop) 
+:Administrator:
+:LineStopper:
+:Support:
+:Machine:
+:Operator:
+:QA:
 
-:Machine: --> (ProcessPanelFromLogfile)
-(ProcessPanelFromLogfile) ..> (MoveLogfileToBackup) : "<include>"
-(ProcessPanelFromLogfile) ..> (CreatePanelFromLogfile) : "<include>"
-(ProcessPanelFromLogfile) ..> (SendPanelToNextStation) : "<include>"
-
-(SendPanelToNextStation) ..> (ShowSuccess) : "<include>"
-(SendPanelToNextStation) ..> (ShowStop) : "<include>"
-
-:Machine: --> (CalculateThreeFiveTenStop)
-(CalculateThreeFiveTenStop) ..> (ShowStop) : "<include>"
-
-:Machine: --> (CalculateCriticalComponentStop)
-(CalculateCriticalComponentStop) ..> (ShowStop) : "<include>"
+Rectangle {
+    usecase (MoveLogfileToBackup)
+    usecase (CreatePanelFromLogfile)
+    usecase (SendPanelToNextStation)
+    
+    :Machine: --> (ProcessPanelFromLogfile)
+    (ProcessPanelFromLogfile) ..> (MoveLogfileToBackup) : "<include>"
+    (ProcessPanelFromLogfile) ..> (CreatePanelFromLogfile) : "<include>"
+    (ProcessPanelFromLogfile) ..> (SendPanelToNextStation) : "<include>"  
+    (ProcessPanelFromLogfile) <.. (StopLine) : "<extend>"  
+    
+    (SendPanelToNextStation) <.. (StopMachine) : "<extend>"
+    
+    :LineStopper: -down-> (StopLine)
+    
+    (StopLine) ..> (StopMachine) : <include>
+    
+    (StopMachine) --> :Operator: : Notifies
+    (SendPanelToNextStation) --> :Operator: : Notifies
+    
+    :Support: --> (ReleaseStopMachine)
+    :Administrator: --> (UpdateSettings)
+    :QA: --> (UpdateQASettings)
+}
 
 @enduml

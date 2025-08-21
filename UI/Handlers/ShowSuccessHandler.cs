@@ -1,11 +1,10 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Core.Application.Common.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Paramore.Brighter;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
 using UI.Common.Events;
-using UI.Features.Operations;
 using UI.Features.Panels;
 
 namespace UI.Handlers;

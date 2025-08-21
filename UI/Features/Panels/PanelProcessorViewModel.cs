@@ -15,7 +15,7 @@ using UI.Common;
 using UI.Handlers;
 using UI.Machines;
 
-namespace UI.Features.Operations;
+namespace UI.Features.Panels;
 
 public partial class PanelProcessorViewModel : ViewModelBase
 {

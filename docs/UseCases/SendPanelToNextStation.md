@@ -13,9 +13,11 @@
     - 4a Connection error
         - The system shows stop for EE/IT
         - End of the use case
-    - 4a Sfc response times out
+    - 4b Sfc response times out
         - The system shows stop for EE/IT
         - End of the use case
-    - 4b Unable to send the panel to the next station
+    - 4c Unable to send the panel to the next station
         - The system shows stop for QA
         - End of the use case
+
+# DTO: Data Transfer Object

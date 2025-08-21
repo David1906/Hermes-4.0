@@ -21,6 +21,7 @@
         <entry key="UI/Features/Operations/OperationProcessorView.axaml" value="UI/UI.csproj" />
         <entry key="UI/Features/Operations/SuccessView.axaml" value="UI/UI.csproj" />
         <entry key="UI/Features/Panels/OperationProcessorView.axaml" value="UI/UI.csproj" />
+        <entry key="UI/Features/Panels/PanelProcessorView.axaml" value="UI/UI.csproj" />
         <entry key="UI/Features/Panels/SuccessView.axaml" value="UI/UI.csproj" />
         <entry key="UI/Features/Stops/Delivery/StopView.axaml" value="UI/UI.csproj" />
         <entry key="UI/Features/Stops/StopView.axaml" value="UI/UI.csproj" />

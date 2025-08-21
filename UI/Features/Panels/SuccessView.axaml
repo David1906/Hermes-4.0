@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:lang="clr-namespace:Common.Languages;assembly=Common"
-        xmlns:operations="clr-namespace:UI.Features.Operations"
         xmlns:panels="clr-namespace:UI.Features.Panels"
         mc:Ignorable="d"
         d:DesignWidth="450"

@@ -14,7 +14,7 @@ enum OperationType {
 }
 
 class Panel
-Panel --> "+" Board
+Panel *--> "+" Board
 Panel o--> "*" Operation
 
 class Board
